@@ -1,13 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:whats_this/screen/home.dart';
 import 'package:whats_this/screen/sign_in.dart';
-import 'package:whats_this/util/styles.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -21,26 +26,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+
     return GetMaterialApp(
       themeMode: ThemeMode.dark,
-      theme: ThemeData(
-        useMaterial3: true,
-      ),
       darkTheme: ThemeData(
         useMaterial3: true,
-        brightness: Brightness.dark,
-        primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.black,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.black,
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: Colors.black,
-          selectedItemColor: Colors.white,
+          selectedItemColor: Colors.amber,
           unselectedItemColor: Colors.grey,
         ),
-        textTheme: getTextTheme(context, Colors.black87),
       ),
       home: UpgradeAlert(
         dialogStyle: UpgradeDialogStyle.cupertino,
-        child: SignInScreen(),
+        child: currentUser != null ? HomeScreen() : SignInScreen(),
       ),
     );
   }

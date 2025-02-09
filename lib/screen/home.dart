@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/screen/add_question.dart';
 import 'package:whats_this/screen/comment.dart';
