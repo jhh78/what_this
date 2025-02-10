@@ -1,8 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -18,7 +18,6 @@ class AddQuestionScreen extends StatefulWidget {
 
 class _AddQuestionScreenState extends State<AddQuestionScreen> {
   final TextEditingController _textController = TextEditingController();
-  final TextEditingController _titleController = TextEditingController(); // 타이틀 컨트롤러 추가
   final FocusNode _focusNode = FocusNode();
   final ImagePicker _picker = ImagePicker();
   List<File> _images = [];
@@ -37,12 +36,16 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
   @override
   void dispose() {
     _textController.dispose();
-    _titleController.dispose(); // 타이틀 컨트롤러 해제
     _focusNode.dispose();
     super.dispose();
   }
 
   Future<void> _pickImageFromCamera() async {
+    if (_images.length >= 3) {
+      Get.snackbar('이미지는 최대 3개까지만 추가할 수 있습니다.', '이미지는 최대 3개까지만 추가할 수 있습니다.');
+      return;
+    }
+
     final XFile? image = await _picker.pickImage(source: ImageSource.camera);
     if (image != null) {
       setState(() {
@@ -64,12 +67,8 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
 
   Future<void> _uploadQuestion() async {
     final String questionText = _textController.text;
-    final String titleText = _titleController.text; // 타이틀 텍스트 추가
-    if (questionText.isEmpty && _images.isEmpty) {
-      // 글과 사진이 모두 비어있으면 업로드하지 않음
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('글이나 사진을 추가해주세요.')),
-      );
+    if (questionText.isEmpty) {
+      Get.snackbar('글이나 사진을 추가해주세요.', '글이나 사진을 추가해주세요.');
       return;
     }
 
@@ -86,26 +85,20 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
       images.add(await http.MultipartFile.fromPath('files', compressedImage.path));
     }
 
-    // 질문 업로드
-    final record = await pb.collection('questions').create(
+    await pb.collection('questions').create(
       body: {
         "key": uid,
         "contents": questionText,
-        "title": titleText, // 타이틀 추가
       },
       files: images,
     );
 
-    // 업로드 완료 후 초기화
     setState(() {
       _textController.clear();
-      _titleController.clear(); // 타이틀 초기화
       _images.clear();
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('업로드 완료')),
-    );
+    Get.snackbar('업로드 완료', '업로드 완료');
   }
 
   @override
@@ -131,18 +124,9 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
             child: Column(
               children: [
                 TextField(
-                  controller: _titleController, // 타이틀 컨트롤러 연결
-                  decoration: InputDecoration(
-                    hintText: 'Enter your title here...',
-                    border: OutlineInputBorder(),
-                  ),
-                  style: TextStyle(fontSize: 18),
-                ),
-                SizedBox(height: 10),
-                TextField(
                   controller: _textController,
                   focusNode: _focusNode,
-                  maxLines: 5,
+                  maxLines: 10,
                   decoration: InputDecoration(
                     hintText: 'Enter your question here...',
                     border: OutlineInputBorder(),
@@ -166,14 +150,19 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
                     },
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: _uploadQuestion,
-                  child: Text('작성'),
-                ),
               ],
             ),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (mounted) {
+            FocusScope.of(context).unfocus();
+          }
+          _uploadQuestion();
+        },
+        child: Icon(Icons.create_new_folder_outlined),
       ),
     );
   }
