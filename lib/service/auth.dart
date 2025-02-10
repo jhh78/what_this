@@ -2,7 +2,9 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hive/hive.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:whats_this/util/hive.dart';
 
 class AuthService {
   // 유저생성
@@ -100,5 +102,15 @@ class AuthService {
 
   static String? getUserUID() {
     return FirebaseAuth.instance.currentUser?.uid;
+  }
+
+  static Future<void> checkInitialized() async {
+    Box box = await Hive.openBox(SYSTEM_BOX);
+    final bool initialized = box.get(IS_FIRST_INSTALL, defaultValue: false);
+
+    if (!initialized) {
+      await signOut();
+    }
+    log("checkInitialized >>>>>> $initialized");
   }
 }

@@ -38,6 +38,7 @@ class HomeScreen extends StatelessWidget {
         ),
         bottomNavigationBar: Obx(
           () => BottomNavigationBar(
+            selectedItemColor: Colors.amber,
             currentIndex: homeProvider.menuIndex.value,
             onTap: (value) {
               homeProvider.changeMenuIndex(value);
@@ -52,15 +53,15 @@ class HomeScreen extends StatelessWidget {
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.list_alt_rounded),
-                label: 'Home',
+                label: 'リスト',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.question_answer_outlined),
-                label: 'Question',
+                label: 'マイリスト',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.add_comment_outlined),
-                label: 'Add',
+                label: '質問する',
               ),
             ],
           ),

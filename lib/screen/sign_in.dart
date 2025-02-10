@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:whats_this/screen/home.dart';
 import 'package:whats_this/service/auth.dart';
+import 'package:whats_this/util/hive.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
@@ -19,6 +21,9 @@ class SignInScreen extends StatelessWidget {
       } else if (Platform.isIOS) {
         await AuthService.signInWithApple();
       }
+
+      Box box = await Hive.openBox(SYSTEM_BOX);
+      box.put(IS_FIRST_INSTALL, true);
 
       Get.offAll(() => HomeScreen(), transition: Transition.fade);
     } catch (error) {

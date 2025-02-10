@@ -30,7 +30,7 @@ class ContentsCardWidget extends StatelessWidget {
                   SizedBox(width: 10),
                   Text(
                     'User',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.black),
                   ),
                   Spacer(),
                   PopupMenuButton<int>(
@@ -40,16 +40,32 @@ class ContentsCardWidget extends StatelessWidget {
                       PopupMenuItem<int>(
                         value: 0,
                         child: Text(
-                          'Edit',
-                          style: Theme.of(context).textTheme.bodySmall,
+                          '違反を報告',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black),
                         ),
                         textStyle: TextStyle(color: Colors.black),
                       ),
                       PopupMenuItem<int>(
                         value: 1,
                         child: Text(
-                          'Delete',
-                          style: Theme.of(context).textTheme.bodySmall,
+                          '削除',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black),
+                        ),
+                        textStyle: TextStyle(color: Colors.black),
+                      ),
+                      PopupMenuItem<int>(
+                        value: 0,
+                        child: Text(
+                          'ブロック',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black),
+                        ),
+                        textStyle: TextStyle(color: Colors.black),
+                      ),
+                      PopupMenuItem<int>(
+                        value: 0,
+                        child: Text(
+                          '修正',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black),
                         ),
                         textStyle: TextStyle(color: Colors.black),
                       ),
@@ -61,12 +77,12 @@ class ContentsCardWidget extends StatelessWidget {
               SizedBox(height: 10),
               Text(
                 'Title of the Post',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
               ),
               SizedBox(height: 5),
               Text(
                 'Content text...',
-                style: TextStyle(fontSize: 16),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black),
               ),
               Image.network(
                 "https://cdn.pixabay.com/photo/2023/02/04/20/32/man-7768120_1280.jpg",
