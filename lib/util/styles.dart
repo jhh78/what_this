@@ -34,3 +34,5 @@ TextTheme getTextTheme(BuildContext context, Color color) {
 
 TextTheme getLightTextTheme(BuildContext context) => getTextTheme(context, const Color.fromARGB(255, 0, 0, 0));
 TextTheme getDarkTextTheme(BuildContext context) => getTextTheme(context, const Color.fromARGB(255, 255, 255, 255));
+
+const double ICON_SIZE = 32;
