@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/provider/home.dart';
+import 'package:whats_this/provider/my_question.dart';
+import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/widget/contents_card.dart';
 
 class MyQuestionScreen extends StatelessWidget {
   MyQuestionScreen({super.key});
   final HomeProvider homeProvider = Get.put(HomeProvider());
+  final MyQuestionProvider myQuestionProvider = Get.put(MyQuestionProvider());
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +20,15 @@ class MyQuestionScreen extends StatelessWidget {
               fontSize: 20,
             )),
       ),
-      body: SafeArea(
-        child: Center(
+      body: Focus(
+        focusNode: myQuestionProvider.focusNode,
+        child: SafeArea(
           child: ListView.builder(
             itemCount: 10,
             itemBuilder: (context, index) {
               return InkWell(
                 onTap: () {
-                  homeProvider.changeIndex(1);
+                  homeProvider.changeScreenIndex(QUESTION_DETAIL);
                 },
                 child: const ContentsCardWidget(),
               );

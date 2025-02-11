@@ -1,3 +1,4 @@
-String AUTH_TYPE_EMAIL = 'email';
-String AUTH_TYPE_GOOGLE = 'google';
-String AUTH_TYPE_APPLE = 'apple';
+const String QUESTION_LIST = 'home';
+const String QUESTION_DETAIL = 'question_detail';
+const String MY_QUESTION = 'my_question';
+const String ADD_QUESTION = 'add_question';

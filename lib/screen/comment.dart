@@ -1,36 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:whats_this/provider/comment_list.dart';
 import 'package:whats_this/provider/home.dart';
+import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/widget/contents_card.dart';
-import 'dart:developer';
 
-class CommentScreen extends StatefulWidget {
-  CommentScreen({Key? key}) : super(key: key);
+class CommentScreen extends StatelessWidget {
+  CommentScreen({super.key});
+
   final HomeProvider homeProvider = Get.put(HomeProvider());
-
-  @override
-  State<CommentScreen> createState() => _CommentScreenState();
-}
-
-class _CommentScreenState extends State<CommentScreen> {
-  final FocusNode _focusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-    _focusNode.addListener(() {
-      if (_focusNode.hasFocus) {
-        // 화면이 포커스를 가졌을 때 실행할 기능
-        log('CommentScreen에 포커스가 들어왔습니다.');
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
-  }
+  final CommentListProvider commentListProvider = Get.put(CommentListProvider());
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +18,12 @@ class _CommentScreenState extends State<CommentScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            widget.homeProvider.changeIndex(0);
+            homeProvider.changeScreenIndex(QUESTION_LIST);
           },
         ),
       ),
       body: Focus(
-        focusNode: _focusNode,
+        focusNode: commentListProvider.focusNode,
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -82,17 +61,14 @@ class _CommentScreenState extends State<CommentScreen> {
                                 SizedBox(width: 10),
                                 Text(
                                   'User $index',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
                                 ),
                               ],
                             ),
                             SizedBox(height: 10),
                             Text(
                               'Content text...',
-                              style: TextStyle(fontSize: 16),
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black),
                             ),
                           ],
                         ),
