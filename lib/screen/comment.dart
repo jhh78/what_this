@@ -27,7 +27,7 @@ class CommentScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const ContentsCardWidget(),
+              // const ContentsCardWidget(questionModel: ,),
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),

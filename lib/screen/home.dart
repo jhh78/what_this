@@ -3,21 +3,17 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/provider/home.dart';
+import 'package:whats_this/provider/question_list.dart';
 import 'package:whats_this/screen/add_question.dart';
 import 'package:whats_this/screen/comment.dart';
 import 'package:whats_this/screen/my_question.dart';
 import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/widget/contents_card.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreen extends StatelessWidget {
+  HomeScreen({super.key});
   final HomeProvider homeProvider = Get.put(HomeProvider());
+  final QuestionListProvider questionListProvider = Get.put(QuestionListProvider());
 
   @override
   Widget build(BuildContext context) {
@@ -28,17 +24,19 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Obx(() => IndexedStack(
                 index: homeProvider.currentIndex.value,
                 children: [
-                  ListView.builder(
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          homeProvider.changeScreenIndex(QUESTION_DETAIL);
+                  Obx(() => ListView.builder(
+                        itemCount: questionListProvider.questionList.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              homeProvider.changeScreenIndex(QUESTION_DETAIL);
+                            },
+                            child: ContentsCardWidget(
+                              questionModel: questionListProvider.questionList[index],
+                            ),
+                          );
                         },
-                        child: const ContentsCardWidget(),
-                      );
-                    },
-                  ),
+                      )),
                   CommentScreen(),
                   MyQuestionScreen(),
                   AddQuestionScreen(),

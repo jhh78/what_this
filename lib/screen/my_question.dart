@@ -30,7 +30,8 @@ class MyQuestionScreen extends StatelessWidget {
                 onTap: () {
                   homeProvider.changeScreenIndex(QUESTION_DETAIL);
                 },
-                child: const ContentsCardWidget(),
+                // child: const ContentsCardWidget(),
+                child: Container(),
               );
             },
           ),
