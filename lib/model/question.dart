@@ -31,6 +31,18 @@ class QuestionModel {
     );
   }
 
+  factory QuestionModel.fromJson(Map<String, dynamic> json) {
+    return QuestionModel(
+      collectionID: json['collectionID'],
+      id: json['id'],
+      key: json['key'],
+      contents: json['contents'],
+      files: json['files'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

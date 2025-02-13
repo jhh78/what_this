@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/provider/my_question.dart';
 import 'package:whats_this/util/constants.dart';
-import 'package:whats_this/widget/contents_card.dart';
 
 class MyQuestionScreen extends StatelessWidget {
   MyQuestionScreen({super.key});
@@ -20,21 +19,18 @@ class MyQuestionScreen extends StatelessWidget {
               fontSize: 20,
             )),
       ),
-      body: Focus(
-        focusNode: myQuestionProvider.focusNode,
-        child: SafeArea(
-          child: ListView.builder(
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  homeProvider.changeScreenIndex(QUESTION_DETAIL);
-                },
-                // child: const ContentsCardWidget(),
-                child: Container(),
-              );
-            },
-          ),
+      body: SafeArea(
+        child: ListView.builder(
+          itemCount: 10,
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () {
+                homeProvider.changeScreenIndex(QUESTION_DETAIL);
+              },
+              // child: const ContentsCardWidget(),
+              child: Container(),
+            );
+          },
         ),
       ),
     );

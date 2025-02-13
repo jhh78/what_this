@@ -4,6 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:whats_this/model/question.dart';
+import 'package:whats_this/util/styles.dart';
+import 'package:whats_this/widget/atoms/icon_button.dart';
 
 class ContentsCardWidget extends StatelessWidget {
   const ContentsCardWidget({super.key, required this.questionModel});
@@ -39,45 +41,42 @@ class ContentsCardWidget extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
                   ),
                   Spacer(),
-                  PopupMenuButton<int>(
-                    onSelected: (item) => print('Selected: $item'),
-                    iconColor: Colors.black87,
-                    itemBuilder: (context) => [
-                      PopupMenuItem<int>(
-                        value: 0,
-                        child: Text(
-                          '違反を報告',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black),
-                        ),
-                        textStyle: TextStyle(color: Colors.black),
+                  Row(
+                    children: [
+                      IconButtonWidget(
+                        color: Colors.red,
+                        onPressed: () {
+                          log('Remove button pressed');
+                          // Add your onPressed code here!
+                        },
+                        icon: Icons.remove_circle_outline_outlined,
                       ),
-                      PopupMenuItem<int>(
-                        value: 1,
-                        child: Text(
-                          '削除',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black),
-                        ),
-                        textStyle: TextStyle(color: Colors.black),
+                      IconButtonWidget(
+                        color: Colors.red,
+                        onPressed: () {
+                          log('Block button pressed');
+                          // Add your onPressed code here!
+                        },
+                        icon: Icons.block,
                       ),
-                      PopupMenuItem<int>(
-                        value: 0,
-                        child: Text(
-                          'ブロック',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black),
-                        ),
-                        textStyle: TextStyle(color: Colors.black),
+                      IconButtonWidget(
+                        color: Colors.red,
+                        onPressed: () {
+                          log('Report button pressed');
+                          // Add your onPressed code here!
+                        },
+                        icon: Icons.notification_important_outlined,
                       ),
-                      PopupMenuItem<int>(
-                        value: 0,
-                        child: Text(
-                          '修正',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black),
-                        ),
-                        textStyle: TextStyle(color: Colors.black),
+                      IconButtonWidget(
+                        color: Colors.blue,
+                        onPressed: () {
+                          log('Edit button pressed');
+                          // Add your onPressed code here!
+                        },
+                        icon: Icons.edit_calendar_outlined,
                       ),
                     ],
-                    color: Colors.white,
-                  )
+                  ),
                 ],
               ),
               SizedBox(height: 10),
@@ -94,7 +93,7 @@ class ContentsCardWidget extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 5.0),
                       child: CachedNetworkImage(
                         imageUrl: imageIrl,
-                        placeholder: (context, url) => Center(child: LinearProgressIndicator()),
+                        // placeholder: (context, url) => Center(child: LinearProgressIndicator()),
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     );

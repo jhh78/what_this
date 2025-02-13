@@ -7,13 +7,46 @@ import 'package:whats_this/model/question.dart';
 
 class QuestionListProvider extends GetxService {
   int currentPage = 1;
+  PocketBase pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
   String questionTable = 'questions';
+
   RxList<QuestionModel> questionList = <QuestionModel>[].obs;
 
   @override
   void onInit() {
     super.onInit();
     log('\t\t\t\t\tQuestionListProvider onInit.');
+    currentPage = 1;
+    questionList.clear();
+    fetchQuestionMadel();
+
+    pb.collection(questionTable).subscribe(
+      '*',
+      (e) {
+        log("\t\t\t\t\t${e.action}");
+        if (e.action == 'create') {
+          questionList.insert(0, QuestionModel.fromRecordModel(e.record!));
+        } else if (e.action == 'update') {
+          final index = questionList.indexWhere((element) => element.id == e.record?.id);
+          if (index != -1) {
+            questionList[index] = QuestionModel.fromRecordModel(e.record!);
+          }
+        } else if (e.action == 'delete') {
+          questionList.removeWhere((element) => element.id == e.record?.id);
+        }
+        log("\t\t\t\t\t${e.record.toString()}");
+      },
+    );
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    log('\t\t\t\t\tQuestionListProvider onClose.');
+    pb.collection('questions').unsubscribe('*');
+  }
+
+  fetchInitQuestionList() {
     currentPage = 1;
     questionList.clear();
     fetchQuestionMadel();

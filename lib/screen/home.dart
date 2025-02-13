@@ -9,6 +9,7 @@ import 'package:whats_this/screen/comment.dart';
 import 'package:whats_this/screen/my_question.dart';
 import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/widget/contents_card.dart';
+import 'package:whats_this/widget/question_list.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -24,19 +25,7 @@ class HomeScreen extends StatelessWidget {
           child: Obx(() => IndexedStack(
                 index: homeProvider.currentIndex.value,
                 children: [
-                  Obx(() => ListView.builder(
-                        itemCount: questionListProvider.questionList.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              homeProvider.changeScreenIndex(QUESTION_DETAIL);
-                            },
-                            child: ContentsCardWidget(
-                              questionModel: questionListProvider.questionList[index],
-                            ),
-                          );
-                        },
-                      )),
+                  QuestionListScreen(),
                   CommentScreen(),
                   MyQuestionScreen(),
                   AddQuestionScreen(),
@@ -48,7 +37,6 @@ class HomeScreen extends StatelessWidget {
             selectedItemColor: Colors.amber,
             currentIndex: homeProvider.menuIndex.value,
             onTap: (value) {
-              homeProvider.changeMenuIndex(value);
               if (value == 0) {
                 homeProvider.changeScreenIndex(QUESTION_LIST);
               } else if (value == 1) {
