@@ -1,15 +1,24 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:whats_this/model/question.dart';
-import 'package:whats_this/util/styles.dart';
 import 'package:whats_this/widget/atoms/icon_button.dart';
 
 class ContentsCardWidget extends StatelessWidget {
-  const ContentsCardWidget({super.key, required this.questionModel});
+  const ContentsCardWidget({
+    super.key,
+    required this.questionModel,
+    this.onDelete,
+    this.onBlock,
+    this.onReport,
+    this.onEdit,
+  });
+
   final QuestionModel questionModel;
+  final VoidCallback? onDelete;
+  final VoidCallback? onBlock;
+  final VoidCallback? onReport;
+  final VoidCallback? onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -37,44 +46,36 @@ class ContentsCardWidget extends StatelessWidget {
                   ),
                   SizedBox(width: 10),
                   Text(
-                    questionModel.key.substring(0, 5),
+                    questionModel.key.substring(0, 8),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
                   ),
                   Spacer(),
                   Row(
                     children: [
-                      IconButtonWidget(
-                        color: Colors.red,
-                        onPressed: () {
-                          log('Remove button pressed');
-                          // Add your onPressed code here!
-                        },
-                        icon: Icons.remove_circle_outline_outlined,
-                      ),
-                      IconButtonWidget(
-                        color: Colors.red,
-                        onPressed: () {
-                          log('Block button pressed');
-                          // Add your onPressed code here!
-                        },
-                        icon: Icons.block,
-                      ),
-                      IconButtonWidget(
-                        color: Colors.red,
-                        onPressed: () {
-                          log('Report button pressed');
-                          // Add your onPressed code here!
-                        },
-                        icon: Icons.notification_important_outlined,
-                      ),
-                      IconButtonWidget(
-                        color: Colors.blue,
-                        onPressed: () {
-                          log('Edit button pressed');
-                          // Add your onPressed code here!
-                        },
-                        icon: Icons.edit_calendar_outlined,
-                      ),
+                      if (onDelete != null)
+                        IconButtonWidget(
+                          color: Colors.red,
+                          onPressed: onDelete!,
+                          icon: Icons.delete_forever_outlined,
+                        ),
+                      if (onBlock != null)
+                        IconButtonWidget(
+                          color: Colors.red,
+                          onPressed: onBlock!,
+                          icon: Icons.block,
+                        ),
+                      if (onReport != null)
+                        IconButtonWidget(
+                          color: Colors.red,
+                          onPressed: onReport!,
+                          icon: Icons.notification_important_outlined,
+                        ),
+                      if (onEdit != null)
+                        IconButtonWidget(
+                          color: Colors.blue,
+                          onPressed: onEdit!,
+                          icon: Icons.edit_calendar_outlined,
+                        ),
                     ],
                   ),
                 ],

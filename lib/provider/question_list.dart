@@ -68,4 +68,36 @@ class QuestionListProvider extends GetxService {
       log(e.toString());
     }
   }
+
+  handleDelete(QuestionModel model) async {
+    try {
+      await pb.collection(questionTable).delete(model.id);
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  handleBlock(QuestionModel model) async {
+    try {
+      await pb.collection(questionTable).update(model.id, body: {'block': true});
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  handleReport(QuestionModel model) async {
+    try {
+      await pb.collection(questionTable).update(model.id, body: {'report': true});
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  handleEdit(QuestionModel model) async {
+    try {
+      await pb.collection(questionTable).update(model.id, body: {'contents': '수정된 내용'});
+    } catch (e) {
+      log(e.toString());
+    }
+  }
 }

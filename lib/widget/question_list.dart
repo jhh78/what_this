@@ -15,12 +15,17 @@ class QuestionListScreen extends StatelessWidget {
     return Obx(() => ListView.builder(
           itemCount: questionListProvider.questionList.length,
           itemBuilder: (context, index) {
+            final question = questionListProvider.questionList[index];
             return InkWell(
               onTap: () {
                 homeProvider.changeScreenIndex(QUESTION_DETAIL);
               },
               child: ContentsCardWidget(
-                questionModel: questionListProvider.questionList[index],
+                questionModel: question,
+                onBlock: () => questionListProvider.handleBlock(question),
+                onReport: () => questionListProvider.handleReport(question),
+                onDelete: () => questionListProvider.handleDelete(question),
+                onEdit: () => questionListProvider.handleEdit(question),
               ),
             );
           },

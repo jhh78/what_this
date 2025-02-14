@@ -1,20 +1,15 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/provider/home.dart';
-import 'package:whats_this/provider/question_list.dart';
 import 'package:whats_this/screen/add_question.dart';
 import 'package:whats_this/screen/comment.dart';
 import 'package:whats_this/screen/my_question.dart';
 import 'package:whats_this/util/constants.dart';
-import 'package:whats_this/widget/contents_card.dart';
 import 'package:whats_this/widget/question_list.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
   final HomeProvider homeProvider = Get.put(HomeProvider());
-  final QuestionListProvider questionListProvider = Get.put(QuestionListProvider());
 
   @override
   Widget build(BuildContext context) {

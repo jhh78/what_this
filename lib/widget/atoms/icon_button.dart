@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:whats_this/util/styles.dart';
 
 class IconButtonWidget extends StatelessWidget {
-  const IconButtonWidget({super.key, required this.color, required this.onPressed, required this.icon});
+  const IconButtonWidget({
+    super.key,
+    required this.color,
+    required this.onPressed,
+    required this.icon,
+  });
   final Color color;
   final VoidCallback onPressed;
   final IconData icon;
