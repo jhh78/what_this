@@ -44,20 +44,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final User? currentUser = FirebaseAuth.instance.currentUser;
+    User? currentUser = FirebaseAuth.instance.currentUser;
     // 사용자가 삭제되었는지 확인하고 로그아웃
     if (currentUser != null) {
       currentUser.reload().then((_) {
-        if (currentUser.metadata.creationTime == null) {
-          FirebaseAuth.instance.signOut();
+        if (currentUser?.metadata.creationTime == null) {
+          throw Exception('User has been deleted');
         }
       }).catchError((error) {
-        log('Error reloading user: $error');
         FirebaseAuth.instance.signOut();
+        currentUser = null;
+        if (error is FirebaseAuthException && error.code == 'user-disabled') {
+          Get.snackbar('Error', 'The user account has been disabled by an administrator.',
+              snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white, margin: EdgeInsets.all(10));
+        } else {
+          log('Error reloading user: $error');
+        }
+
+        Get.offAll(() => SignInScreen());
       });
     }
 
-    log(currentUser.toString());
+    log("Main Screen :::: ${currentUser.toString()}");
     return GetMaterialApp(
       themeMode: ThemeMode.dark,
       theme: ThemeData(

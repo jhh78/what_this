@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
@@ -30,7 +31,12 @@ class SignInScreen extends StatelessWidget {
 
       Get.offAll(() => HomeScreen(), transition: Transition.fade);
     } catch (error) {
-      log(error.toString());
+      if (error is FirebaseAuthException && error.code == 'user-disabled') {
+        Get.snackbar('Error', 'The user account has been disabled by an administrator.',
+            snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white, margin: EdgeInsets.all(10));
+      } else {
+        log('Error reloading user: $error');
+      }
     }
   }
 

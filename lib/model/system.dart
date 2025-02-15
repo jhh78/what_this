@@ -1,4 +1,3 @@
-// Hive 모델 예시
 import 'package:hive/hive.dart';
 
 part 'system.g.dart';
