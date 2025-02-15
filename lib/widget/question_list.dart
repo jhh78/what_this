@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:whats_this/provider/form.dart';
 import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/provider/question_list.dart';
 import 'package:whats_this/util/constants.dart';
+import 'package:whats_this/widget/atoms/reason_form.dart';
 import 'package:whats_this/widget/contents_card.dart';
 
 class QuestionListScreen extends StatelessWidget {
   QuestionListScreen({super.key});
   final HomeProvider homeProvider = Get.put(HomeProvider());
   final QuestionListProvider questionListProvider = Get.put(QuestionListProvider());
+  final FormProvider formProvider = Get.put(FormProvider());
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +46,35 @@ class QuestionListScreen extends StatelessWidget {
                     ],
                   );
                 },
-                onReport: () => questionListProvider.handleReport(question),
+                onReport: () {
+                  Get.defaultDialog(
+                    title: '通報',
+                    middleText: "通報理由を選択してください。",
+                    content: Padding(
+                      padding: const EdgeInsets.only(left: 20, right: 20),
+                      child: ReasonFormWidget(),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        child: Text('キャンセル'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          if (!(formProvider.formKey.currentState?.validate() ?? false)) {
+                            return;
+                          }
+
+                          questionListProvider.handleReport(question, formProvider.getData(REPORT_REASON_KIND));
+                          Get.back();
+                        },
+                        child: Text('通報'),
+                      ),
+                    ],
+                  );
+                },
                 onDelete: () {
                   Get.defaultDialog(
                     title: '削除',

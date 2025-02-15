@@ -86,20 +86,22 @@ class QuestionListProvider extends GetxService {
   handleBlock(QuestionModel model) async {
     log('handleBlock');
     try {
-      final box = await Hive.openBox(SYSTEM_BOX);
-      final SystemConfigModel config = box.get(SYSTEM_CONFIG);
-      config.blockList.add(model.id);
-      box.put(SYSTEM_CONFIG, config);
-
+      _addBlockList(model);
       questionList.removeWhere((element) => element.id == model.id);
     } catch (e) {
       log(e.toString());
     }
   }
 
-  handleReport(QuestionModel model) async {
+  handleReport(QuestionModel model, String value) async {
     try {
-      await pb.collection(questionTable).update(model.id, body: {'report': true});
+      await pb.collection('report').create(body: {
+        'questionID': model.id,
+        'reason': value,
+      });
+
+      questionList.removeWhere((element) => element.id == model.id);
+      _addBlockList(model);
     } catch (e) {
       log(e.toString());
     }
@@ -111,5 +113,12 @@ class QuestionListProvider extends GetxService {
     } catch (e) {
       log(e.toString());
     }
+  }
+
+  _addBlockList(QuestionModel model) async {
+    final box = await Hive.openBox(SYSTEM_BOX);
+    final SystemConfigModel config = box.get(SYSTEM_CONFIG);
+    config.blockList.add(model.id);
+    box.put(SYSTEM_CONFIG, config);
   }
 }
