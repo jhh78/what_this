@@ -1,10 +1,13 @@
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:whats_this/model/system.dart';
+import 'package:whats_this/screen/sign_in.dart';
 import 'package:whats_this/util/constants.dart';
 
 class AuthService {
@@ -115,5 +118,39 @@ class AuthService {
     }
 
     log("config >>>>>> ${config.debug()}");
+  }
+
+  static Future<User?> checkUserStatus() async {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      try {
+        await currentUser.reload();
+        if (currentUser.metadata.creationTime == null) {
+          throw FirebaseAuthException(code: 'user-disabled');
+        }
+      } catch (error) {
+        if (error is FirebaseAuthException && error.code == 'user-disabled') {
+          log('The user account has been disabled by an administrator.');
+          await FirebaseAuth.instance.signOut();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (Get.isSnackbarOpen) {
+              Get.back();
+            }
+            Get.snackbar(
+              'Error',
+              'The user account has been disabled by an administrator.',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+              margin: EdgeInsets.all(10),
+            );
+          });
+        } else {
+          log('Error reloading user: $error');
+          await FirebaseAuth.instance.signOut();
+        }
+      }
+    }
+    return FirebaseAuth.instance.currentUser;
   }
 }

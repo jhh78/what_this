@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/screen/add_question.dart';
 import 'package:whats_this/screen/comment.dart';
 import 'package:whats_this/screen/my_question.dart';
+import 'package:whats_this/screen/sign_in.dart';
+import 'package:whats_this/service/auth.dart';
 import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/widget/question_list.dart';
 
@@ -31,7 +34,14 @@ class HomeScreen extends StatelessWidget {
           () => BottomNavigationBar(
             selectedItemColor: Colors.amber,
             currentIndex: homeProvider.menuIndex.value,
-            onTap: (value) {
+            onTap: (value) async {
+              final User? currentUser = FirebaseAuth.instance.currentUser;
+
+              if (currentUser == null) {
+                Get.to(() => SignInScreen());
+                return;
+              }
+
               if (value == 0) {
                 homeProvider.changeScreenIndex(QUESTION_LIST);
               } else if (value == 1) {
