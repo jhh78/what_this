@@ -35,10 +35,10 @@ class HomeScreen extends StatelessWidget {
             selectedItemColor: Colors.amber,
             currentIndex: homeProvider.menuIndex.value,
             onTap: (value) async {
-              final User? currentUser = FirebaseAuth.instance.currentUser;
+              final User? currentUser = await AuthService.checkUserStatus();
 
               if (currentUser == null) {
-                Get.to(() => SignInScreen());
+                Get.offAll(() => SignInScreen());
                 return;
               }
 

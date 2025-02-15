@@ -7,7 +7,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:whats_this/model/system.dart';
-import 'package:whats_this/screen/sign_in.dart';
 import 'package:whats_this/util/constants.dart';
 
 class AuthService {
