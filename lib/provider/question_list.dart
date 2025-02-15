@@ -59,12 +59,15 @@ class QuestionListProvider extends GetxService {
     try {
       final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
 
-      final response = await pb.collection(questionTable).getList(
-            page: currentPage,
-            perPage: 30,
-            sort: '-created',
-            // filter: 'created >= "2022-01-01 00:00:00" && someField1 != someField2',
-          );
+      // 제외할 ID 목록
+      final Box box = await Hive.openBox(SYSTEM_BOX);
+      final SystemConfigModel config = box.get(SYSTEM_CONFIG);
+
+      // 필터 조건 생성
+      String filterCondition = config.blockList.map((id) => 'id != "$id"').join(' && ');
+
+      final response =
+          await pb.collection(questionTable).getList(page: currentPage, perPage: 30, sort: '-created', filter: filterCondition);
 
       questionList.addAll(response.items.map((e) => QuestionModel.fromRecordModel(e)).toList());
     } catch (e) {
@@ -83,9 +86,12 @@ class QuestionListProvider extends GetxService {
   handleBlock(QuestionModel model) async {
     log('handleBlock');
     try {
-      final box = Hive.box<SystemConfigModel>(SYSTEM_CONFIG);
-      log(box.toString());
-      // await pb.collection(questionTable).update(model.id, body: {'block': true});
+      final box = await Hive.openBox(SYSTEM_BOX);
+      final SystemConfigModel config = box.get(SYSTEM_CONFIG);
+      config.blockList.add(model.id);
+      box.put(SYSTEM_CONFIG, config);
+
+      questionList.removeWhere((element) => element.id == model.id);
     } catch (e) {
       log(e.toString());
     }

@@ -22,9 +22,49 @@ class QuestionListScreen extends StatelessWidget {
               },
               child: ContentsCardWidget(
                 questionModel: question,
-                onBlock: () => questionListProvider.handleBlock(question),
+                onBlock: () {
+                  Get.defaultDialog(
+                    title: 'ブロック',
+                    middleText: "選択したコンテンツをブロックしますか？",
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        child: Text('キャンセル'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          questionListProvider.handleBlock(question);
+                          Get.back();
+                        },
+                        child: Text('ブロック'),
+                      ),
+                    ],
+                  );
+                },
                 onReport: () => questionListProvider.handleReport(question),
-                onDelete: () => questionListProvider.handleDelete(question),
+                onDelete: () {
+                  Get.defaultDialog(
+                    title: '削除',
+                    middleText: "選択したコンテンツを削除しますか？",
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        child: Text('キャンセル'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          questionListProvider.handleDelete(question);
+                          Get.back();
+                        },
+                        child: Text('削除'),
+                      ),
+                    ],
+                  );
+                },
                 onEdit: () => questionListProvider.handleEdit(question),
               ),
             );
