@@ -2,8 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:whats_this/model/question.dart';
+import 'package:whats_this/model/system.dart';
+import 'package:whats_this/util/constants.dart';
 
 class QuestionListProvider extends GetxService {
   int currentPage = 1;
@@ -78,8 +81,11 @@ class QuestionListProvider extends GetxService {
   }
 
   handleBlock(QuestionModel model) async {
+    log('handleBlock');
     try {
-      await pb.collection(questionTable).update(model.id, body: {'block': true});
+      final box = Hive.box<SystemConfigModel>(SYSTEM_CONFIG);
+      log(box.toString());
+      // await pb.collection(questionTable).update(model.id, body: {'block': true});
     } catch (e) {
       log(e.toString());
     }

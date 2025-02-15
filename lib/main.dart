@@ -8,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:upgrader/upgrader.dart';
+import 'package:whats_this/model/system.dart';
 import 'package:whats_this/screen/home.dart';
 import 'package:whats_this/screen/sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -32,6 +33,7 @@ void main() async {
   }
 
   await Hive.initFlutter();
+  Hive.registerAdapter(SystemConfigModelAdapter());
   await AuthService.checkInitialized();
 
   runApp(const MyApp());

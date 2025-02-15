@@ -6,9 +6,10 @@ import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:whats_this/model/system.dart';
 import 'package:whats_this/screen/home.dart';
 import 'package:whats_this/service/auth.dart';
-import 'package:whats_this/util/hive.dart';
+import 'package:whats_this/util/constants.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
@@ -22,7 +23,10 @@ class SignInScreen extends StatelessWidget {
       }
 
       Box box = await Hive.openBox(SYSTEM_BOX);
-      box.put(IS_FIRST_INSTALL, true);
+      SystemConfigModel config = box.get(SYSTEM_CONFIG);
+      config.isInit = true;
+
+      box.put(SYSTEM_CONFIG, config);
 
       Get.offAll(() => HomeScreen(), transition: Transition.fade);
     } catch (error) {
