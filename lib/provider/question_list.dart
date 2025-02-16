@@ -20,9 +20,7 @@ class QuestionListProvider extends GetxService {
   void onInit() {
     super.onInit();
     log('\t\t\t\t\tQuestionListProvider onInit.');
-    currentPage = 1;
-    questionList.clear();
-    fetchQuestionMadel();
+    fetchInitQuestionList();
 
     pb.collection(questionTable).subscribe(
       '*',
@@ -51,6 +49,7 @@ class QuestionListProvider extends GetxService {
   }
 
   fetchInitQuestionList() {
+    log('QuestionListProvider fetchInitQuestionList');
     currentPage = 1;
     questionList.clear();
     fetchQuestionMadel();
