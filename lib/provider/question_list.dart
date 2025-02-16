@@ -10,6 +10,7 @@ import 'package:whats_this/util/constants.dart';
 
 class QuestionListProvider extends GetxService {
   int currentPage = 1;
+  final pagePerCount = 10;
   PocketBase pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
   String questionTable = 'questions';
 
@@ -66,13 +67,29 @@ class QuestionListProvider extends GetxService {
       // 필터 조건 생성
       String filterCondition = config.blockList.map((id) => 'id != "$id"').join(' && ');
 
-      final response =
-          await pb.collection(questionTable).getList(page: currentPage, perPage: 30, sort: '-created', filter: filterCondition);
+      final response = await pb.collection(questionTable).getList(
+            page: currentPage,
+            perPage: 10,
+            sort: '-created',
+            filter: filterCondition,
+          );
 
       questionList.addAll(response.items.map((e) => QuestionModel.fromRecordModel(e)).toList());
+      final ids = questionList.map((e) => e.id).toSet();
+      questionList.retainWhere((x) => ids.remove(x.id));
+
+      if (response.totalItems > currentPage * pagePerCount) {
+        questionList.add(QuestionModel.emptyMode());
+      }
     } catch (e) {
       log(e.toString());
     }
+  }
+
+  handleNextPage() {
+    currentPage++;
+    questionList.removeAt(questionList.indexWhere((element) => element.id == QuestionModel.emptyMode().id));
+    fetchQuestionMadel();
   }
 
   handleDelete(QuestionModel model) async {

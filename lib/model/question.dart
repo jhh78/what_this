@@ -19,6 +19,18 @@ class QuestionModel {
     required this.updatedAt,
   });
 
+  factory QuestionModel.emptyMode() {
+    return QuestionModel(
+      collectionID: '',
+      id: '-1',
+      key: '',
+      contents: '',
+      files: [],
+      createdAt: '',
+      updatedAt: '',
+    );
+  }
+
   factory QuestionModel.fromRecordModel(RecordModel response) {
     return QuestionModel(
       collectionID: response.get('collectionId'),
