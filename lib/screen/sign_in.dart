@@ -7,6 +7,7 @@ import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:whats_this/model/system.dart';
 import 'package:whats_this/screen/home.dart';
 import 'package:whats_this/service/auth.dart';
@@ -40,6 +41,44 @@ class SignInScreen extends StatelessWidget {
     }
   }
 
+  void _handlePrivacyPolicy(BuildContext context) {
+    Get.dialog(
+      Dialog(
+        insetPadding: EdgeInsets.all(8.0),
+        child: Container(
+          width: double.maxFinite,
+          height: double.maxFinite,
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: WebViewWidget(
+                  controller: WebViewController()..loadRequest(Uri.parse('https://jhh78.github.io/policys/jp.html')),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  _handleSignIn();
+                },
+                child: Text(
+                  '同意する',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  maximumSize: Size(100, 50),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -63,12 +102,12 @@ class SignInScreen extends StatelessWidget {
                     if (Platform.isAndroid)
                       SignInButton(
                         Buttons.GoogleDark,
-                        onPressed: _handleSignIn,
+                        onPressed: () => _handlePrivacyPolicy(context),
                       ),
                     if (Platform.isIOS)
                       SignInButton(
                         Buttons.AppleDark,
-                        onPressed: _handleSignIn,
+                        onPressed: () => _handlePrivacyPolicy(context),
                       ),
                   ],
                 ),

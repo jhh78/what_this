@@ -39,59 +39,60 @@ class MyQuestionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Question',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-            )),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Obx(() => ListView.builder(
-                    itemCount: myQuestionProvider.questionList.length,
-                    itemBuilder: (context, index) {
-                      if (myQuestionProvider.questionList[index].id == "-1") {
-                        return Container(
-                          margin: EdgeInsets.all(10.0),
-                          child: InkWell(
-                            onTap: myQuestionProvider.handleNextPage,
-                            child: Card(
-                              elevation: 5,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                side: BorderSide(color: Colors.blueAccent.withAlpha(100), width: 2),
-                              ),
-                              color: Colors.white,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Center(
-                                  child: Text("もっと見る", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black)),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'マイ質問',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
+          ),
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: Obx(() => ListView.builder(
+                      itemCount: myQuestionProvider.questionList.length,
+                      itemBuilder: (context, index) {
+                        if (myQuestionProvider.questionList[index].id == "-1") {
+                          return Container(
+                            margin: EdgeInsets.all(10.0),
+                            child: InkWell(
+                              onTap: myQuestionProvider.handleNextPage,
+                              child: Card(
+                                elevation: 5,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  side: BorderSide(color: Colors.blueAccent.withAlpha(100), width: 2),
+                                ),
+                                color: Colors.white,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Center(
+                                    child: Text("もっと見る", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black)),
+                                  ),
                                 ),
                               ),
                             ),
+                          );
+                        }
+
+                        final question = myQuestionProvider.questionList[index];
+                        return InkWell(
+                          onTap: () {
+                            homeProvider.changeScreenIndex(QUESTION_DETAIL);
+                          },
+                          child: ContentsCardWidget(
+                            questionModel: question,
+                            onDelete: () => handleOnDelete(question),
+                            onEdit: () => handleQuestionEdit(question),
                           ),
                         );
-                      }
-
-                      final question = myQuestionProvider.questionList[index];
-                      return InkWell(
-                        onTap: () {
-                          homeProvider.changeScreenIndex(QUESTION_DETAIL);
-                        },
-                        child: ContentsCardWidget(
-                          questionModel: question,
-                          onDelete: () => handleOnDelete(question),
-                          onEdit: () => handleQuestionEdit(question),
-                        ),
-                      );
-                    },
-                  )),
-            ),
-          ],
+                      },
+                    )),
+              ),
+            ],
+          ),
         ),
       ),
     );
