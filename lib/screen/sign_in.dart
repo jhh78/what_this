@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:get/get.dart';
@@ -49,27 +50,30 @@ class SignInScreen extends StatelessWidget {
           width: double.maxFinite,
           height: double.maxFinite,
           decoration: BoxDecoration(
-            color: Colors.transparent,
+            color: Colors.grey.shade100,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
             children: [
               Expanded(
                 child: WebViewWidget(
-                  controller: WebViewController()..loadRequest(Uri.parse('https://jhh78.github.io/policys/jp.html')),
+                  controller: WebViewController()..loadRequest(Uri.parse(dotenv.env['PRIVACY_POLICY_URL_JP']!)),
                 ),
               ),
               TextButton(
                 onPressed: () {
                   _handleSignIn();
                 },
-                child: Text(
-                  '同意する',
-                  style: TextStyle(color: Colors.white),
-                ),
                 style: TextButton.styleFrom(
                   backgroundColor: Colors.blue,
-                  maximumSize: Size(100, 50),
+                  minimumSize: Size(200, 40),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                child: Text(
+                  '同意する',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
                 ),
               ),
             ],
