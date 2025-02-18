@@ -123,14 +123,6 @@ class QuestionListProvider extends GetxService {
     }
   }
 
-  handleEdit(QuestionModel model) async {
-    try {
-      await pb.collection(questionTable).update(model.id, body: {'contents': '수정된 내용'});
-    } catch (e) {
-      log(e.toString());
-    }
-  }
-
   _addBlockList(QuestionModel model) async {
     final box = await Hive.openBox(SYSTEM_BOX);
     final SystemConfigModel config = box.get(SYSTEM_CONFIG);

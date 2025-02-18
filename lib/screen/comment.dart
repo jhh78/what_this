@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:whats_this/provider/comment_list.dart';
 import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/util/constants.dart';
+import 'package:whats_this/widget/comment_card.dart';
+import 'package:whats_this/widget/contents_card.dart';
 
 class CommentScreen extends StatelessWidget {
   CommentScreen({super.key});
@@ -12,6 +14,10 @@ class CommentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (commentListProvider.questionModel.value == null) {
+      return SizedBox.shrink();
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -24,54 +30,13 @@ class CommentScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // const ContentsCardWidget(questionModel: ,),
+            ContentsCardWidget(questionModel: commentListProvider.questionModel.value!),
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemCount: 10,
               itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.all(10.0),
-                  child: Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                      side: BorderSide(
-                        color: Colors.blueAccent.withAlpha(100),
-                        width: 2,
-                      ),
-                    ),
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  'https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295396_1280.png',
-                                ),
-                                radius: 20,
-                              ),
-                              SizedBox(width: 10),
-                              Text(
-                                'User $index',
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Content text...',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
+                return CommentCardWidget();
               },
             ),
           ],

@@ -33,10 +33,6 @@ class MyQuestionScreen extends StatelessWidget {
     );
   }
 
-  void handleQuestionEdit(QuestionModel question) {
-    myQuestionProvider.handleEdit(question);
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -85,7 +81,6 @@ class MyQuestionScreen extends StatelessWidget {
                           child: ContentsCardWidget(
                             questionModel: question,
                             onDelete: () => handleOnDelete(question),
-                            onEdit: () => handleQuestionEdit(question),
                           ),
                         );
                       },

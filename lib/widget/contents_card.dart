@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:whats_this/model/question.dart';
@@ -11,14 +12,50 @@ class ContentsCardWidget extends StatelessWidget {
     this.onDelete,
     this.onBlock,
     this.onReport,
-    this.onEdit,
   });
 
   final QuestionModel questionModel;
   final VoidCallback? onDelete;
   final VoidCallback? onBlock;
   final VoidCallback? onReport;
-  final VoidCallback? onEdit;
+
+  Widget renderIconButton() {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      return Container();
+    }
+
+    if (currentUser.uid == questionModel.key) {
+      return Row(
+        children: [
+          if (onDelete != null)
+            IconButtonWidget(
+              color: Colors.red,
+              onPressed: onDelete!,
+              icon: Icons.delete_forever_outlined,
+            ),
+        ],
+      );
+    }
+
+    return Row(
+      children: [
+        if (onBlock != null)
+          IconButtonWidget(
+            color: Colors.red,
+            onPressed: onBlock!,
+            icon: Icons.block,
+          ),
+        if (onReport != null)
+          IconButtonWidget(
+            color: Colors.red,
+            onPressed: onReport!,
+            icon: Icons.notification_important_outlined,
+          ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,34 +87,7 @@ class ContentsCardWidget extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
                   ),
                   Spacer(),
-                  Row(
-                    children: [
-                      if (onDelete != null)
-                        IconButtonWidget(
-                          color: Colors.red,
-                          onPressed: onDelete!,
-                          icon: Icons.delete_forever_outlined,
-                        ),
-                      if (onBlock != null)
-                        IconButtonWidget(
-                          color: Colors.red,
-                          onPressed: onBlock!,
-                          icon: Icons.block,
-                        ),
-                      if (onReport != null)
-                        IconButtonWidget(
-                          color: Colors.red,
-                          onPressed: onReport!,
-                          icon: Icons.notification_important_outlined,
-                        ),
-                      if (onEdit != null)
-                        IconButtonWidget(
-                          color: Colors.blue,
-                          onPressed: onEdit!,
-                          icon: Icons.edit_calendar_outlined,
-                        ),
-                    ],
-                  ),
+                  renderIconButton(),
                 ],
               ),
               SizedBox(height: 10),
@@ -94,7 +104,18 @@ class ContentsCardWidget extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 5.0),
                       child: CachedNetworkImage(
                         imageUrl: imageIrl,
-                        // placeholder: (context, url) => Center(child: LinearProgressIndicator()),
+                        placeholder: (context, url) => Container(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.width * 1.18,
+                          color: Colors.grey[300],
+                          child: Center(
+                            child: Icon(
+                              Icons.image_search,
+                              color: Colors.grey[700],
+                              size: 50,
+                            ),
+                          ),
+                        ),
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     );

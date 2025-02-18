@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/model/question.dart';
+import 'package:whats_this/provider/comment_list.dart';
 import 'package:whats_this/provider/form.dart';
 import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/provider/question_list.dart';
@@ -13,6 +14,7 @@ class QuestionListScreen extends StatelessWidget {
   final HomeProvider homeProvider = Get.put(HomeProvider());
   final QuestionListProvider questionListProvider = Get.put(QuestionListProvider());
   final FormProvider formProvider = Get.put(FormProvider());
+  final CommentListProvider commentListProvider = Get.put(CommentListProvider());
 
   void handleOnBlock(QuestionModel question) {
     Get.defaultDialog(
@@ -88,10 +90,6 @@ class QuestionListScreen extends StatelessWidget {
     );
   }
 
-  void handleQuestionEdit(QuestionModel question) {
-    questionListProvider.handleEdit(question);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -126,6 +124,7 @@ class QuestionListScreen extends StatelessWidget {
                   final question = questionListProvider.questionList[index];
                   return InkWell(
                     onTap: () {
+                      commentListProvider.setQuestionModel(question);
                       homeProvider.changeScreenIndex(QUESTION_DETAIL);
                     },
                     child: ContentsCardWidget(
@@ -133,7 +132,6 @@ class QuestionListScreen extends StatelessWidget {
                       onBlock: () => handleOnBlock(question),
                       onReport: () => handleOnReport(question),
                       onDelete: () => handleOnDelete(question),
-                      onEdit: () => handleQuestionEdit(question),
                     ),
                   );
                 },
