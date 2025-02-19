@@ -6,6 +6,7 @@ import 'package:whats_this/screen/add_question.dart';
 import 'package:whats_this/screen/comment.dart';
 import 'package:whats_this/screen/my_question.dart';
 import 'package:whats_this/screen/sign_in.dart';
+import 'package:whats_this/screen/user_info.dart';
 import 'package:whats_this/service/auth.dart';
 import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/widget/question_list.dart';
@@ -23,6 +24,7 @@ class HomeScreen extends StatelessWidget {
           child: Obx(() => IndexedStack(
                 index: homeProvider.currentIndex.value,
                 children: [
+                  UserInfoScreen(),
                   QuestionListScreen(),
                   CommentScreen(),
                   MyQuestionScreen(),
@@ -32,7 +34,9 @@ class HomeScreen extends StatelessWidget {
         ),
         bottomNavigationBar: Obx(
           () => BottomNavigationBar(
+            type: BottomNavigationBarType.shifting,
             selectedItemColor: Colors.amber,
+            unselectedItemColor: Colors.grey,
             currentIndex: homeProvider.menuIndex.value,
             onTap: (value) async {
               final User? currentUser = await AuthService.checkUserStatus();
@@ -41,16 +45,21 @@ class HomeScreen extends StatelessWidget {
                 Get.offAll(() => SignInScreen());
                 return;
               }
-
               if (value == 0) {
-                homeProvider.changeScreenIndex(QUESTION_LIST);
+                homeProvider.changeScreenIndex(USER_INFO);
               } else if (value == 1) {
-                homeProvider.changeScreenIndex(MY_QUESTION);
+                homeProvider.changeScreenIndex(QUESTION_LIST);
               } else if (value == 2) {
+                homeProvider.changeScreenIndex(MY_QUESTION);
+              } else if (value == 3) {
                 homeProvider.changeScreenIndex(ADD_QUESTION);
               }
             },
             items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: '情報',
+              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.list_alt_rounded),
                 label: 'リスト',

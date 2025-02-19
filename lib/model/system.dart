@@ -10,10 +10,14 @@ class SystemConfigModel extends HiveObject {
   @HiveField(1)
   bool isInit = false;
 
+  @HiveField(2)
+  String userID = "";
+
   SystemConfigModel();
 
   Map<String, dynamic> debug() {
     return {
+      "userID": userID,
       "blockList": blockList,
       "isInit": isInit,
     };

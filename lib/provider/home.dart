@@ -18,19 +18,22 @@ class HomeProvider extends GetxService {
   }
 
   void changeScreenIndex(String screen) {
-    if (screen == QUESTION_LIST) {
+    if (screen == USER_INFO) {
       currentIndex.value = 0;
       menuIndex.value = 0;
+    } else if (screen == QUESTION_LIST) {
+      currentIndex.value = 1;
+      menuIndex.value = 1;
       questionListProvider.fetchInitQuestionList();
     } else if (screen == MY_QUESTION) {
-      currentIndex.value = 2;
-      menuIndex.value = 1;
-      myQuestionProvider.fetchInitQuestionList();
-    } else if (screen == QUESTION_DETAIL) {
-      currentIndex.value = 1;
-    } else if (screen == ADD_QUESTION) {
       currentIndex.value = 3;
       menuIndex.value = 2;
+      myQuestionProvider.fetchInitQuestionList();
+    } else if (screen == QUESTION_DETAIL) {
+      currentIndex.value = 2;
+    } else if (screen == ADD_QUESTION) {
+      currentIndex.value = 4;
+      menuIndex.value = 3;
       questionAddProvider.init();
     }
   }

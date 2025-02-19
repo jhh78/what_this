@@ -8,6 +8,7 @@ import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:pocketbase/pocketbase.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:whats_this/model/system.dart';
 import 'package:whats_this/screen/home.dart';
@@ -25,9 +26,16 @@ class SignInScreen extends StatelessWidget {
         await AuthService.signInWithApple();
       }
 
+      // 회원등록
+      final user = FirebaseAuth.instance.currentUser;
+      final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
+      final body = <String, dynamic>{"key": user?.uid};
+      final record = await pb.collection('member').create(body: body);
+
       Box box = await Hive.openBox(SYSTEM_BOX);
       SystemConfigModel config = box.get(SYSTEM_CONFIG);
       config.isInit = true;
+      config.userID = record.id;
 
       box.put(SYSTEM_CONFIG, config);
 
