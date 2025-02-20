@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/service/camera.dart';
-import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/util/styles.dart';
 import 'package:whats_this/util/util.dart';
 
@@ -83,7 +81,7 @@ class UserInfoScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async {
-                    userProvider.updateUser();
+                    await userProvider.updateUser();
                     Get.snackbar(
                       '処理完了',
                       'ユーザー情報が更新されました。',
@@ -91,7 +89,12 @@ class UserInfoScreen extends StatelessWidget {
                       margin: EdgeInsets.all(16),
                     );
                   },
-                  child: Text('保存', style: Theme.of(context).textTheme.titleLarge),
+                  child: userProvider.isLoading.value
+                      ? CircularProgressIndicator()
+                      : Text(
+                          '更新',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
                 ),
               ],
             ),

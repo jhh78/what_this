@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'package:get/get_connect/http/src/multipart/multipart_file.dart';
-import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 
