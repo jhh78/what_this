@@ -18,20 +18,17 @@ class SystemConfigModelAdapter extends TypeAdapter<SystemConfigModel> {
     };
     return SystemConfigModel()
       ..blockList = (fields[0] as List).cast<String>()
-      ..isInit = fields[1] as bool
-      ..userID = fields[2] as String;
+      ..isInit = fields[1] as bool;
   }
 
   @override
   void write(BinaryWriter writer, SystemConfigModel obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(2)
       ..writeByte(0)
       ..write(obj.blockList)
       ..writeByte(1)
-      ..write(obj.isInit)
-      ..writeByte(2)
-      ..write(obj.userID);
+      ..write(obj.isInit);
   }
 
   @override

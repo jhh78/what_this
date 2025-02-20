@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:image/image.dart' as img;
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 class CameraService {
@@ -23,5 +24,18 @@ class CameraService {
     }
 
     return null;
+  }
+
+  Future<List<http.MultipartFile>> convertImageToMultipartFile({required String key, required File image, required int size}) async {
+    final List<http.MultipartFile> multipartImages = [];
+
+    if (image.path.isEmpty) {
+      return multipartImages;
+    }
+
+    final File compressedImage = await compressImage(image, size);
+    multipartImages.add(await http.MultipartFile.fromPath(key, compressedImage.path));
+
+    return multipartImages;
   }
 }
