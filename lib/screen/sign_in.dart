@@ -7,16 +7,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
-import 'package:pocketbase/pocketbase.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:whats_this/model/system.dart';
+import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/screen/home.dart';
 import 'package:whats_this/service/auth.dart';
-import 'package:whats_this/util/constants.dart';
 
 class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+  SignInScreen({super.key});
+  final UserProvider userProvider = Get.put(UserProvider());
 
   Future<void> _handleSignIn() async {
     try {
@@ -26,18 +24,7 @@ class SignInScreen extends StatelessWidget {
         await AuthService.signInWithApple();
       }
 
-      // 회원등록
-      final user = FirebaseAuth.instance.currentUser;
-      final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
-      final body = <String, dynamic>{"key": user?.uid};
-      final record = await pb.collection('member').create(body: body);
-
-      Box box = await Hive.openBox(SYSTEM_BOX);
-      SystemConfigModel config = box.get(SYSTEM_CONFIG);
-      config.isInit = true;
-      config.userID = record.id;
-
-      box.put(SYSTEM_CONFIG, config);
+      await userProvider.createUser();
 
       Get.offAll(() => HomeScreen(), transition: Transition.fade);
     } catch (error) {
