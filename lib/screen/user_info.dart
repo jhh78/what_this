@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -5,7 +7,6 @@ import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/service/camera.dart';
 import 'package:whats_this/util/styles.dart';
 import 'package:whats_this/util/util.dart';
-import 'package:intl/intl.dart';
 
 class UserInfoScreen extends StatelessWidget {
   UserInfoScreen({super.key});
@@ -15,12 +16,12 @@ class UserInfoScreen extends StatelessWidget {
   ImageProvider<Object> getFileImageWidget() {
     if (userProvider.tempProfileImage.value.path.isNotEmpty) {
       return FileImage(userProvider.tempProfileImage.value);
-    } else if (userProvider.user.value.profile.isEmpty) {
+    } else if (userProvider.user.value.profile == null) {
       return AssetImage('assets/avatar/default.png');
     }
 
     final fileUrl =
-        "${dotenv.env['POCKET_BASE_FILE_URL']}${userProvider.user.value.collectionID}/${userProvider.user.value.id}/${userProvider.user.value.profile}";
+        "${dotenv.env['POCKET_BASE_FILE_URL']}${userProvider.user.value.collectionId}/${userProvider.user.value.id}/${userProvider.user.value.profile}";
     return NetworkImage(fileUrl);
   }
 

@@ -10,6 +10,9 @@ class SystemConfigModel extends HiveObject {
   @HiveField(1)
   bool isInit = false;
 
+  @HiveField(2)
+  String userId = '';
+
   SystemConfigModel();
 
   Map<String, dynamic> debug() {

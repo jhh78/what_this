@@ -77,6 +77,7 @@ class UserProvider extends GetxService {
     Box box = await Hive.openBox(SYSTEM_BOX);
     SystemConfigModel config = box.get(SYSTEM_CONFIG);
     config.isInit = true;
+    config.userId = record.id;
     box.put(SYSTEM_CONFIG, config);
     await box.close();
   }
