@@ -35,7 +35,7 @@ class AddQuestionScreen extends StatelessWidget {
                   IconButton(
                     onPressed: () {
                       FocusScope.of(context).unfocus();
-                      questionAddProvider.pickImageFromCamera();
+                      // questionAddProvider.pickImageFromCamera();
                     },
                     icon: Icon(
                       Icons.camera,
