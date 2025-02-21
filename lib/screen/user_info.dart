@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -16,7 +14,7 @@ class UserInfoScreen extends StatelessWidget {
   ImageProvider<Object> getFileImageWidget() {
     if (userProvider.tempProfileImage.value.path.isNotEmpty) {
       return FileImage(userProvider.tempProfileImage.value);
-    } else if (userProvider.user.value.profile == null) {
+    } else if (userProvider.user.value.profile.toString().isEmpty || userProvider.user.value.profile == null) {
       return AssetImage('assets/avatar/default.png');
     }
 

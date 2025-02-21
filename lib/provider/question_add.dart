@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -38,8 +37,11 @@ class QuestionAddProvider extends GetxService {
     image.value = File("");
   }
 
-  Future<void> uploadQuestion() async {
+  Future<void> addQuestion() async {
     final String questionText = textController.text;
+    Box box = await Hive.openBox(SYSTEM_BOX);
+    final SystemConfigModel config = box.get(SYSTEM_CONFIG);
+    box.close();
 
     final pbUrl = dotenv.env['POCKET_BASE_URL'].toString();
     final pb = PocketBase(pbUrl);
@@ -53,7 +55,7 @@ class QuestionAddProvider extends GetxService {
 
     await pb.collection('questions').create(
       body: {
-        "user": userProvider.user.value.id,
+        "user": config.userId,
         "contents": questionText,
       },
       files: multipartImages,

@@ -6,6 +6,7 @@ import 'package:whats_this/provider/form.dart';
 import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/provider/question_list.dart';
 import 'package:whats_this/util/constants.dart';
+import 'package:whats_this/widget/atoms/data_not_found.dart';
 import 'package:whats_this/widget/atoms/reason_form.dart';
 import 'package:whats_this/widget/contents_card.dart';
 
@@ -90,52 +91,63 @@ class QuestionListScreen extends StatelessWidget {
     );
   }
 
+  Widget renderListContents(BuildContext context) {
+    if (questionListProvider.questionList.isEmpty) {
+      return DataNotFoundWidget();
+    }
+
+    return ListView.builder(
+      itemCount: questionListProvider.questionList.length,
+      itemBuilder: (context, index) {
+        if (questionListProvider.questionList[index].id == "-1") {
+          return Container(
+            margin: EdgeInsets.all(10.0),
+            child: InkWell(
+              onTap: questionListProvider.handleNextPage,
+              child: Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                  side: BorderSide(color: Colors.blueAccent.withAlpha(100), width: 2),
+                ),
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Center(
+                    child: Text("もっと見る",
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: Colors.black,
+                            )),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+
+        final question = questionListProvider.questionList[index];
+        return InkWell(
+          onTap: () {
+            commentListProvider.setQuestionModel(question);
+            homeProvider.changeScreenIndex(QUESTION_DETAIL);
+          },
+          child: ContentsCardWidget(
+            questionModel: question,
+            onBlock: () => handleOnBlock(question),
+            onReport: () => handleOnReport(question),
+            onDelete: () => handleOnDelete(question),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Expanded(
-          child: Obx(() => ListView.builder(
-                itemCount: questionListProvider.questionList.length,
-                itemBuilder: (context, index) {
-                  if (questionListProvider.questionList[index].id == "-1") {
-                    return Container(
-                      margin: EdgeInsets.all(10.0),
-                      child: InkWell(
-                        onTap: questionListProvider.handleNextPage,
-                        child: Card(
-                          elevation: 5,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            side: BorderSide(color: Colors.blueAccent.withAlpha(100), width: 2),
-                          ),
-                          color: Colors.white,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Center(
-                              child: Text("もっと見る", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black)),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-
-                  final question = questionListProvider.questionList[index];
-                  return InkWell(
-                    onTap: () {
-                      commentListProvider.setQuestionModel(question);
-                      homeProvider.changeScreenIndex(QUESTION_DETAIL);
-                    },
-                    child: ContentsCardWidget(
-                      questionModel: question,
-                      onBlock: () => handleOnBlock(question),
-                      onReport: () => handleOnReport(question),
-                      onDelete: () => handleOnDelete(question),
-                    ),
-                  );
-                },
-              )),
+          child: Obx(() => renderListContents(context)),
         ),
       ],
     );

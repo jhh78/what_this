@@ -36,7 +36,11 @@ class UserProvider extends GetxService {
   }
 
   Future<void> fetchUserData() async {
-    final userID = user.value.id;
+    Box box = await Hive.openBox(SYSTEM_BOX);
+    final SystemConfigModel config = box.get(SYSTEM_CONFIG);
+    await box.close();
+
+    final userID = config.userId;
 
     if (userID.isEmpty) {
       return;

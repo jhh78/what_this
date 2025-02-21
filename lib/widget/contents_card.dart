@@ -4,11 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:whats_this/model/question.dart';
-import 'package:whats_this/model/system.dart';
 import 'package:whats_this/provider/user.dart';
-import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/widget/atoms/icon_button.dart';
 
 class ContentsCardWidget extends StatelessWidget {
@@ -60,13 +57,12 @@ class ContentsCardWidget extends StatelessWidget {
   }
 
   ImageProvider<Object> getFileImageWidget(QuestionModel questionModel) {
-    // if (userProvider.tempProfileImage.value.path.isNotEmpty) {
-    //   return FileImage(userProvider.tempProfileImage.value);
-    // } else if (userProvider.profileImage.isEmpty) {
-    //   return AssetImage('assets/avatar/default.png');
-    // }
+    if (questionModel.user.profile.toString().isEmpty) {
+      return AssetImage('assets/avatar/default.png');
+    }
 
-    final fileUrl = "${dotenv.env['POCKET_BASE_FILE_URL']}${questionModel.collectionID}/${questionModel.id}/${questionModel.files}";
+    final fileUrl =
+        "${dotenv.env['POCKET_BASE_FILE_URL']}${questionModel.user.collectionId}/${questionModel.user.id}/${questionModel.user.profile}";
     return NetworkImage(fileUrl);
   }
 
@@ -98,7 +94,6 @@ class ContentsCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('questionModel: ${questionModel.toJson()}');
     return Container(
       margin: EdgeInsets.all(10.0),
       child: Card(
@@ -121,7 +116,7 @@ class ContentsCardWidget extends StatelessWidget {
                   ),
                   SizedBox(width: 10),
                   Text(
-                    questionModel.user,
+                    questionModel.user.username,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
                   ),
                   Spacer(),

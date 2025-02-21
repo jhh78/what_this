@@ -15,8 +15,8 @@ class HomeProvider extends GetxService {
   final UserProvider userProvider = Get.put(UserProvider());
 
   void init() {
-    currentIndex.value = 0;
-    menuIndex.value = 0;
+    currentIndex.value = 1;
+    menuIndex.value = 1;
   }
 
   void changeScreenIndex(String screen) {

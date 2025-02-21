@@ -1,45 +1,48 @@
+import 'dart:developer';
+
 import 'package:pocketbase/pocketbase.dart';
+import 'package:whats_this/model/user.dart';
 
 class QuestionModel {
   String collectionID;
   String id;
-  String key;
+  UserModel user;
   String contents;
-  List<String> files;
-  String createdAt;
-  String updatedAt;
+  String files;
+  String created;
+  String updated;
 
   QuestionModel({
     required this.collectionID,
     required this.id,
-    required this.key,
+    required this.user,
     required this.contents,
     required this.files,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.created,
+    required this.updated,
   });
 
   factory QuestionModel.emptyMode() {
     return QuestionModel(
       collectionID: '',
-      id: '-1',
-      key: '',
+      id: '',
+      user: UserModel.emptyModel(),
       contents: '',
-      files: [],
-      createdAt: '',
-      updatedAt: '',
+      files: '',
+      created: '',
+      updated: '',
     );
   }
 
   factory QuestionModel.fromRecordModel(RecordModel response) {
     return QuestionModel(
-      collectionID: response.get('collectionId'),
+      collectionID: response.collectionId,
       id: response.id,
-      key: response.get('key'),
+      user: UserModel.fromJson(response.get('expand')['user']),
       contents: response.get('contents'),
       files: response.get('files'),
-      createdAt: response.get('createdAt'),
-      updatedAt: response.get('updatedAt'),
+      created: response.get('created'),
+      updated: response.get('updated'),
     );
   }
 
@@ -47,22 +50,22 @@ class QuestionModel {
     return QuestionModel(
       collectionID: json['collectionID'],
       id: json['id'],
-      key: json['key'],
+      user: json['key'],
       contents: json['contents'],
       files: json['files'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
+      created: json['created'],
+      updated: json['updated'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'key': key,
+      'key': user,
       'contents': contents,
       'files': files,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'created': created,
+      'updated': updated,
     };
   }
 }

@@ -1,29 +1,26 @@
 import 'dart:developer';
 
-import 'package:get/get.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 class UserModel {
   String collectionId;
   String id;
   String username;
-  String email;
   String key;
-  String? profile;
+  String profile;
   int exp;
-  String createdAt;
-  String updatedAt;
+  String created;
+  String updated;
 
   UserModel({
     required this.collectionId,
     required this.id,
     required this.username,
-    required this.email,
     required this.key,
     required this.profile,
     required this.exp,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.created,
+    required this.updated,
   });
 
   factory UserModel.emptyModel() {
@@ -31,12 +28,11 @@ class UserModel {
       collectionId: '',
       id: '',
       username: '',
-      email: '',
       key: '',
-      profile: null,
+      profile: '',
       exp: 0,
-      createdAt: '',
-      updatedAt: '',
+      created: '',
+      updated: '',
     );
   }
 
@@ -45,27 +41,24 @@ class UserModel {
       collectionId: response.get('collectionId'),
       id: response.id,
       username: response.get('username'),
-      email: response.get('email'),
       key: response.get('key'),
-      profile: response.get('profile').toString().isEmpty ? null : response.get('profile'),
+      profile: response.get('profile') ?? '',
       exp: response.get('exp'),
-      createdAt: response.get('createdAt'),
-      updatedAt: response.get('updatedAt'),
+      created: response.get('created'),
+      updated: response.get('updated'),
     );
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    log("UserModel.fromJson ??????????????????? $json");
     return UserModel(
       collectionId: json['collectionId'],
       id: json['id'],
       username: json['username'],
-      email: json['email'],
       key: json['key'],
-      profile: json['profile'].toString().isEmpty ? null : json['profile'],
+      profile: json['profile'] ?? '',
       exp: json['exp'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
+      created: json['created'],
+      updated: json['updated'],
     );
   }
 
@@ -74,12 +67,11 @@ class UserModel {
       'collectionId': collectionId,
       'id': id,
       'username': username,
-      'email': email,
       'key': key,
       'profile': profile,
       'exp': exp,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'created': created,
+      'updated': updated,
     };
   }
 }

@@ -19,24 +19,12 @@ class QuestionListProvider extends GetxService {
   @override
   void onInit() {
     super.onInit();
-    log('\t\t\t\t\tQuestionListProvider onInit.');
     fetchInitQuestionList();
 
     pb.collection(questionTable).subscribe(
       '*',
       (e) {
-        log("\t\t\t\t\t${e.action}");
-        if (e.action == 'create') {
-          questionList.insert(0, QuestionModel.fromRecordModel(e.record!));
-        } else if (e.action == 'update') {
-          final index = questionList.indexWhere((element) => element.id == e.record?.id);
-          if (index != -1) {
-            questionList[index] = QuestionModel.fromRecordModel(e.record!);
-          }
-        } else if (e.action == 'delete') {
-          questionList.removeWhere((element) => element.id == e.record?.id);
-        }
-        log("\t\t\t\t\t${e.record.toString()}");
+        fetchInitQuestionList();
       },
     );
   }
@@ -44,12 +32,10 @@ class QuestionListProvider extends GetxService {
   @override
   void onClose() {
     super.onClose();
-    log('\t\t\t\t\tQuestionListProvider onClose.');
     pb.collection('questions').unsubscribe('*');
   }
 
   fetchInitQuestionList() {
-    log('QuestionListProvider fetchInitQuestionList');
     currentPage = 1;
     questionList.clear();
     fetchQuestionMadel();
@@ -64,11 +50,12 @@ class QuestionListProvider extends GetxService {
       final SystemConfigModel config = box.get(SYSTEM_CONFIG);
 
       // 필터 조건 생성
-      String filterCondition = config.blockList.map((id) => 'id != "$id"').join(' && ');
+      String filterCondition = config.blockList.isNotEmpty ? config.blockList.map((id) => 'id != "$id"').join(' && ') : '';
 
       final response = await pb.collection(questionTable).getList(
             page: currentPage,
             perPage: 10,
+            expand: 'user',
             sort: '-created',
             filter: filterCondition,
           );
@@ -80,8 +67,8 @@ class QuestionListProvider extends GetxService {
       if (response.totalItems > currentPage * pagePerCount) {
         questionList.add(QuestionModel.emptyMode());
       }
-    } catch (e) {
-      log(e.toString());
+    } catch (e, stackTrace) {
+      log("fetchQuestionMadel error: $stackTrace");
     }
   }
 

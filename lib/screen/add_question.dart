@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/provider/question_add.dart';
+import 'package:whats_this/service/camera.dart';
 import 'package:whats_this/util/styles.dart';
 
 class AddQuestionScreen extends StatelessWidget {
@@ -9,6 +10,7 @@ class AddQuestionScreen extends StatelessWidget {
 
   final HomeProvider homeProvider = Get.put(HomeProvider());
   final QuestionAddProvider questionAddProvider = Get.put(QuestionAddProvider());
+  final CameraService cameraService = CameraService();
 
   Future<void> handleRegister() async {
     if (questionAddProvider.textController.value.text.isEmpty) {
@@ -16,9 +18,38 @@ class AddQuestionScreen extends StatelessWidget {
       return;
     }
 
-    await questionAddProvider.uploadQuestion();
+    await questionAddProvider.addQuestion();
     Get.snackbar('処理完了', '質問が登録されました。');
     homeProvider.init();
+  }
+
+  Widget renderImageArea() {
+    if (questionAddProvider.image.value.path.isEmpty) {
+      return SizedBox.shrink();
+    }
+
+    return Stack(
+      children: [
+        Image.file(
+          questionAddProvider.image.value,
+          width: double.infinity,
+          fit: BoxFit.cover,
+        ),
+        Positioned(
+          right: 0,
+          child: IconButton(
+            icon: Icon(
+              Icons.remove_circle_outline_rounded,
+              color: Colors.red,
+              size: ICON_SIZE,
+            ),
+            onPressed: () {
+              questionAddProvider.clearImage();
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -35,7 +66,7 @@ class AddQuestionScreen extends StatelessWidget {
                   IconButton(
                     onPressed: () {
                       FocusScope.of(context).unfocus();
-                      // questionAddProvider.pickImageFromCamera();
+                      questionAddProvider.pickImage();
                     },
                     icon: Icon(
                       Icons.camera,
@@ -43,7 +74,12 @@ class AddQuestionScreen extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: handleRegister,
+                    onPressed: () async {
+                      FocusScope.of(context).unfocus();
+                      await Future.delayed(Duration(milliseconds: 1000));
+
+                      handleRegister();
+                    },
                     icon: Icon(
                       Icons.create_new_folder_outlined,
                       size: ICON_SIZE,
@@ -74,41 +110,7 @@ class AddQuestionScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 10),
-              Obx(
-                () => GridView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                  ),
-                  itemCount: questionAddProvider.images.length,
-                  itemBuilder: (context, index) {
-                    return Stack(
-                      children: [
-                        Image.file(
-                          questionAddProvider.images[index],
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ),
-                        Positioned(
-                          right: 0,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.remove_circle_outline_rounded,
-                              color: Colors.red,
-                              size: ICON_SIZE,
-                            ),
-                            onPressed: () {
-                              questionAddProvider.images.removeAt(index);
-                            },
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
+              Obx(() => renderImageArea()),
             ],
           ),
         ),

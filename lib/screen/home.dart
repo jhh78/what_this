@@ -5,11 +5,11 @@ import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/screen/add_question.dart';
 import 'package:whats_this/screen/comment.dart';
 import 'package:whats_this/screen/my_question.dart';
+import 'package:whats_this/screen/question_list.dart';
 import 'package:whats_this/screen/sign_in.dart';
 import 'package:whats_this/screen/user_info.dart';
 import 'package:whats_this/service/auth.dart';
 import 'package:whats_this/util/constants.dart';
-import 'package:whats_this/widget/question_list.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
