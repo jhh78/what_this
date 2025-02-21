@@ -14,7 +14,7 @@ class UserInfoScreen extends StatelessWidget {
   ImageProvider<Object> getFileImageWidget() {
     if (userProvider.tempProfileImage.value.path.isNotEmpty) {
       return FileImage(userProvider.tempProfileImage.value);
-    } else if (userProvider.user.value.profile.toString().isEmpty || userProvider.user.value.profile == null) {
+    } else if (userProvider.user.value.profile.isEmpty) {
       return AssetImage('assets/avatar/default.png');
     }
 

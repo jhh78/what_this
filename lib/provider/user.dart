@@ -38,7 +38,6 @@ class UserProvider extends GetxService {
   Future<void> fetchUserData() async {
     Box box = await Hive.openBox(SYSTEM_BOX);
     final SystemConfigModel config = box.get(SYSTEM_CONFIG);
-    await box.close();
 
     final userID = config.userId;
 
@@ -83,7 +82,6 @@ class UserProvider extends GetxService {
     config.isInit = true;
     config.userId = record.id;
     box.put(SYSTEM_CONFIG, config);
-    await box.close();
   }
 
   Future<void> updateUser() async {

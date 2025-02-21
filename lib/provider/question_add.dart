@@ -41,7 +41,6 @@ class QuestionAddProvider extends GetxService {
     final String questionText = textController.text;
     Box box = await Hive.openBox(SYSTEM_BOX);
     final SystemConfigModel config = box.get(SYSTEM_CONFIG);
-    box.close();
 
     final pbUrl = dotenv.env['POCKET_BASE_URL'].toString();
     final pb = PocketBase(pbUrl);

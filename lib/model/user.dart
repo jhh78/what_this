@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:pocketbase/pocketbase.dart';
 
 class UserModel {
