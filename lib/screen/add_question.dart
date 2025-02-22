@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/provider/question_add.dart';
+import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/service/camera.dart';
 import 'package:whats_this/util/styles.dart';
 
@@ -10,6 +11,7 @@ class AddQuestionScreen extends StatelessWidget {
 
   final HomeProvider homeProvider = Get.put(HomeProvider());
   final QuestionAddProvider questionAddProvider = Get.put(QuestionAddProvider());
+  final UserProvider userProvider = Get.put(UserProvider());
   final CameraService cameraService = CameraService();
 
   Future<void> handleRegister() async {
@@ -19,7 +21,7 @@ class AddQuestionScreen extends StatelessWidget {
     }
 
     await questionAddProvider.addQuestion();
-    Get.snackbar('処理完了', '質問が登録されました。');
+    await userProvider.addPoint();
     homeProvider.init();
   }
 

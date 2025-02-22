@@ -35,6 +35,12 @@ class MyQuestionScreen extends StatelessWidget {
   }
 
   Widget renderQuestionContents() {
+    if (myQuestionProvider.isLoading.value) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     if (myQuestionProvider.questionList.isEmpty) {
       return DataNotFoundWidget();
     }

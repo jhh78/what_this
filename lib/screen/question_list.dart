@@ -17,7 +17,7 @@ class QuestionListScreen extends StatelessWidget {
   final FormProvider formProvider = Get.put(FormProvider());
   final CommentListProvider commentListProvider = Get.put(CommentListProvider());
 
-  void handleOnBlock(QuestionModel question) {
+  void handleOnBlock({required BuildContext context, required QuestionModel question}) {
     Get.defaultDialog(
       title: 'ブロック',
       middleText: "選択したコンテンツをブロックしますか？",
@@ -39,7 +39,7 @@ class QuestionListScreen extends StatelessWidget {
     );
   }
 
-  void handleOnReport(QuestionModel question) {
+  void handleOnReport({required BuildContext context, required QuestionModel question}) {
     Get.defaultDialog(
       title: '通報',
       middleText: "通報理由を選択してください。",
@@ -51,6 +51,7 @@ class QuestionListScreen extends StatelessWidget {
         TextButton(
           onPressed: () {
             Get.back();
+            FocusScope.of(context).unfocus();
           },
           child: Text('キャンセル'),
         ),
@@ -69,7 +70,7 @@ class QuestionListScreen extends StatelessWidget {
     );
   }
 
-  void handleOnDelete(QuestionModel question) {
+  void handleOnDelete({required BuildContext context, required QuestionModel question}) {
     Get.defaultDialog(
       title: '削除',
       middleText: "選択したコンテンツを削除しますか？",
@@ -92,6 +93,12 @@ class QuestionListScreen extends StatelessWidget {
   }
 
   Widget renderListContents(BuildContext context) {
+    if (questionListProvider.isLoading.value) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     if (questionListProvider.questionList.isEmpty) {
       return DataNotFoundWidget();
     }
@@ -126,6 +133,7 @@ class QuestionListScreen extends StatelessWidget {
         }
 
         final question = questionListProvider.questionList[index];
+        question.showData();
         return InkWell(
           onTap: () {
             commentListProvider.setQuestionModel(question);
@@ -133,9 +141,9 @@ class QuestionListScreen extends StatelessWidget {
           },
           child: ContentsCardWidget(
             questionModel: question,
-            onBlock: () => handleOnBlock(question),
-            onReport: () => handleOnReport(question),
-            onDelete: () => handleOnDelete(question),
+            onBlock: () => handleOnBlock(context: context, question: question),
+            onReport: () => handleOnReport(context: context, question: question),
+            onDelete: () => handleOnDelete(context: context, question: question),
           ),
         );
       },

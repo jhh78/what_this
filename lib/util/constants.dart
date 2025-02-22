@@ -8,3 +8,5 @@ const String MY_QUESTION = 'my_question';
 const String ADD_QUESTION = 'add_question';
 
 const String REPORT_REASON_KIND = "reportReason";
+
+const int ADD_POINT = 10;

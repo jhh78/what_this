@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/model/question.dart';
 import 'package:whats_this/provider/user.dart';
+import 'package:whats_this/util/util.dart';
 import 'package:whats_this/widget/atoms/icon_button.dart';
 
 class ContentsCardWidget extends StatelessWidget {
@@ -23,7 +24,7 @@ class ContentsCardWidget extends StatelessWidget {
   final UserProvider userProvider = Get.put(UserProvider());
 
   Future<Widget> renderIconButton() async {
-    if (userProvider.user.value.id == questionModel.id) {
+    if (userProvider.user.value.id == questionModel.user.id) {
       return Row(
         children: [
           if (onDelete != null)
@@ -113,9 +114,18 @@ class ContentsCardWidget extends StatelessWidget {
                     radius: 20,
                   ),
                   SizedBox(width: 10),
-                  Text(
-                    questionModel.user.username,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        getLevel(questionModel.user.exp),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
+                      ),
+                      Text(
+                        questionModel.user.username,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
+                      ),
+                    ],
                   ),
                   Spacer(),
                   FutureBuilder(

@@ -116,7 +116,7 @@ class AuthService {
       await signOut();
     }
 
-    log("config >>>>>> ${config.debug()}");
+    config.showData();
   }
 
   static Future<User?> checkUserStatus() async {

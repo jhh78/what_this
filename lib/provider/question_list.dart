@@ -15,6 +15,7 @@ class QuestionListProvider extends GetxService {
   String questionTable = 'questions';
 
   RxList<QuestionModel> questionList = <QuestionModel>[].obs;
+  RxBool isLoading = false.obs;
 
   @override
   void onInit() {
@@ -43,6 +44,7 @@ class QuestionListProvider extends GetxService {
 
   fetchQuestionMadel() async {
     try {
+      isLoading.value = true;
       final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
 
       // 제외할 ID 목록
@@ -69,6 +71,8 @@ class QuestionListProvider extends GetxService {
       }
     } catch (e, stackTrace) {
       log("fetchQuestionMadel error: $stackTrace");
+    } finally {
+      isLoading.value = false;
     }
   }
 

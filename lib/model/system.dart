@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:whats_this/util/util.dart';
 
 part 'system.g.dart';
 
@@ -15,10 +16,9 @@ class SystemConfigModel extends HiveObject {
 
   SystemConfigModel();
 
-  Map<String, dynamic> debug() {
-    return {
-      "blockList": blockList,
-      "isInit": isInit,
-    };
-  }
+  void showData() => showLog({
+        'blockList': blockList,
+        'isInit': isInit,
+        'userId': userId,
+      }, runtimeType);
 }

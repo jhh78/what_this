@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -16,6 +15,7 @@ class MyQuestionProvider extends GetxService {
   String questionTable = 'questions';
 
   RxList<QuestionModel> questionList = <QuestionModel>[].obs;
+  RxBool isLoading = false.obs;
 
   fetchInitQuestionList() {
     currentPage = 1;
@@ -25,6 +25,7 @@ class MyQuestionProvider extends GetxService {
 
   fetchQuestionMadel() async {
     try {
+      isLoading.value = true;
       final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
       final Box box = await Hive.openBox(SYSTEM_BOX);
       final SystemConfigModel config = box.get(SYSTEM_CONFIG);
@@ -41,6 +42,8 @@ class MyQuestionProvider extends GetxService {
       questionList.addAll(response.items.map((e) => QuestionModel.fromRecordModel(e)).toList());
     } catch (e, stackTrace) {
       log(stackTrace.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 

@@ -96,4 +96,15 @@ class UserProvider extends GetxService {
 
     await pb.collection(tableName).update(user.value.id, body: body, files: multipartImages);
   }
+
+  Future<void> addPoint() async {
+    user.value.exp += ADD_POINT;
+
+    final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
+    final body = <String, dynamic>{
+      "exp": user.value.exp,
+    };
+
+    await pb.collection(tableName).update(user.value.id, body: body);
+  }
 }

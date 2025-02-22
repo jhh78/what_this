@@ -1,4 +1,5 @@
 import 'package:pocketbase/pocketbase.dart';
+import 'package:whats_this/util/util.dart';
 
 class UserModel {
   String collectionId;
@@ -60,16 +61,14 @@ class UserModel {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'collectionId': collectionId,
-      'id': id,
-      'username': username,
-      'key': key,
-      'profile': profile,
-      'exp': exp,
-      'created': created,
-      'updated': updated,
-    };
-  }
+  void showData() => showLog({
+        'collectionId': collectionId,
+        'id': id,
+        'username': username,
+        'key': key,
+        'profile': profile,
+        'exp': exp,
+        'created': created,
+        'updated': updated,
+      }, runtimeType);
 }
