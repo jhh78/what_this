@@ -98,7 +98,9 @@ class UserProvider extends GetxService {
   Future<void> updateUser() async {
     final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
 
-    final body = <String, dynamic>{};
+    final body = <String, dynamic>{
+      "exp": user.value.exp,
+    };
     final List<http.MultipartFile> multipartImages = await cameraService.convertImageToMultipartFile(
       key: 'profile',
       image: tempProfileImage.value,

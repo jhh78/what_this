@@ -106,7 +106,7 @@ class QuestionListScreen extends StatelessWidget {
     return ListView.builder(
       itemCount: questionListProvider.questionList.length,
       itemBuilder: (context, index) {
-        if (questionListProvider.questionList[index].id == "-1") {
+        if (questionListProvider.questionList[index].id.isEmpty) {
           return Container(
             margin: EdgeInsets.all(10.0),
             child: InkWell(

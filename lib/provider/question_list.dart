@@ -44,15 +44,16 @@ class QuestionListProvider extends GetxService {
     pb.collection('questions').unsubscribe('*');
   }
 
-  fetchInitQuestionList() {
+  fetchInitQuestionList() async {
+    isLoading.value = true;
     currentPage = 1;
     questionList.clear();
-    fetchQuestionMadel();
+    await fetchQuestionMadel();
+    isLoading.value = false;
   }
 
   fetchQuestionMadel() async {
     try {
-      isLoading.value = true;
       final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
 
       // 제외할 ID 목록
@@ -64,7 +65,7 @@ class QuestionListProvider extends GetxService {
 
       final response = await pb.collection(questionTable).getList(
             page: currentPage,
-            perPage: 10,
+            perPage: pagePerCount,
             expand: 'user',
             sort: '-created',
             filter: filterCondition,
@@ -79,14 +80,12 @@ class QuestionListProvider extends GetxService {
       }
     } catch (e, stackTrace) {
       log("fetchQuestionMadel error: $stackTrace");
-    } finally {
-      isLoading.value = false;
     }
   }
 
   handleNextPage() {
     currentPage++;
-    questionList.removeAt(questionList.indexWhere((element) => element.id == QuestionModel.emptyMode().id));
+    questionList.removeWhere((element) => element.id == QuestionModel.emptyMode().id);
     fetchQuestionMadel();
   }
 
