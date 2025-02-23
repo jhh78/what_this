@@ -133,7 +133,6 @@ class QuestionListScreen extends StatelessWidget {
         }
 
         final question = questionListProvider.questionList[index];
-        question.showData();
         return InkWell(
           onTap: () {
             commentListProvider.setQuestionModel(question);
@@ -152,12 +151,16 @@ class QuestionListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: Obx(() => renderListContents(context)),
-        ),
-      ],
+    return Focus(
+      focusNode: questionListProvider.focusManagerProvider.questionListFocusNode,
+      onFocusChange: (value) => questionListProvider.focusManagerProvider.questionListFocusNode.unfocus(),
+      child: Column(
+        children: [
+          Expanded(
+            child: Obx(() => renderListContents(context)),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -30,63 +30,67 @@ class UserInfoScreen extends StatelessWidget {
       );
     }
 
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          GestureDetector(
-              onTap: () => userProvider.pickImage(),
-              child: CircleAvatar(
-                radius: 120,
-                backgroundImage: getFileImageWidget(),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: Icon(
-                    Icons.camera_alt,
-                    color: Colors.white,
-                    size: ICON_SIZE,
-                  ),
-                ),
-              )),
-          const SizedBox(height: 48),
-          Padding(
-            padding: const EdgeInsets.all(48.0),
-            child: Column(
-              children: [
-                renderRowWidget('レベル: ', getLevel(userProvider.user.value.exp)),
-                const SizedBox(height: 32),
-                renderRowWidget('経験値: ', getNumberFormat(userProvider.user.value.exp)),
-                const SizedBox(height: 32),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size.fromHeight(48), // Set the height
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                    ),
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.onSurface,
+    return Focus(
+      focusNode: userProvider.focusManagerProvider.profileFocusNode,
+      onFocusChange: (value) => userProvider.focusManagerProvider.profileFocusNode.unfocus(),
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            GestureDetector(
+                onTap: () => userProvider.pickImage(),
+                child: CircleAvatar(
+                  radius: 120,
+                  backgroundImage: getFileImageWidget(),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: Icon(
+                      Icons.camera_alt,
+                      color: Colors.white,
+                      size: ICON_SIZE,
                     ),
                   ),
-                  onPressed: () async {
-                    await userProvider.updateUser();
-                    Get.snackbar(
-                      '処理完了',
-                      'ユーザー情報が更新されました。',
-                      snackPosition: SnackPosition.BOTTOM,
-                      margin: EdgeInsets.all(16),
-                    );
-                  },
-                  child: userProvider.isLoading.value
-                      ? CircularProgressIndicator()
-                      : Text(
-                          '更新',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                ),
-              ],
+                )),
+            const SizedBox(height: 48),
+            Padding(
+              padding: const EdgeInsets.all(48.0),
+              child: Column(
+                children: [
+                  renderRowWidget('レベル: ', getLevel(userProvider.user.value.exp)),
+                  const SizedBox(height: 32),
+                  renderRowWidget('経験値: ', getNumberFormat(userProvider.user.value.exp)),
+                  const SizedBox(height: 32),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size.fromHeight(48), // Set the height
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    onPressed: () async {
+                      await userProvider.updateUser();
+                      Get.snackbar(
+                        '処理完了',
+                        'ユーザー情報が更新されました。',
+                        snackPosition: SnackPosition.BOTTOM,
+                        margin: EdgeInsets.all(16),
+                      );
+                    },
+                    child: userProvider.isLoading.value
+                        ? CircularProgressIndicator()
+                        : Text(
+                            '更新',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

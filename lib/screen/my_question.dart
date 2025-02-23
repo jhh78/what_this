@@ -87,24 +87,28 @@ class MyQuestionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            'マイ質問',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Colors.white,
-                ),
+    return Focus(
+      focusNode: myQuestionProvider.focusManagerProvider.myQuestionFocusNode,
+      onFocusChange: (value) => myQuestionProvider.focusManagerProvider.myQuestionFocusNode.unfocus(),
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text(
+              'マイ質問',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: Colors.white,
+                  ),
+            ),
           ),
-        ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: Obx(() => renderQuestionContents()),
-              ),
-            ],
+          body: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: Obx(() => renderQuestionContents()),
+                ),
+              ],
+            ),
           ),
         ),
       ),

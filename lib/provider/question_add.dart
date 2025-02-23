@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:pocketbase/pocketbase.dart';
 import 'package:whats_this/model/system.dart';
+import 'package:whats_this/provider/focus_manager.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/service/camera.dart';
 import 'package:whats_this/util/constants.dart';
@@ -17,6 +19,19 @@ class QuestionAddProvider extends GetxService {
   final TextEditingController textController = TextEditingController();
   final CameraService cameraService = CameraService();
   final UserProvider userProvider = Get.put(UserProvider());
+  final FocusManagerProvider focusManagerProvider = Get.put(FocusManagerProvider());
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    focusManagerProvider.addQuestionFocusNode.addListener(() {
+      if (focusManagerProvider.addQuestionFocusNode.hasFocus) {
+        log("?????????????????????????????????????????? > addQuestionFocusNode");
+        init();
+      }
+    });
+  }
 
   void init() {
     clearImage();

@@ -56,64 +56,68 @@ class AddQuestionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      FocusScope.of(context).unfocus();
-                      questionAddProvider.pickImage();
-                    },
-                    icon: Icon(
-                      Icons.camera,
-                      size: ICON_SIZE,
+    return Focus(
+      focusNode: questionAddProvider.focusManagerProvider.addQuestionFocusNode,
+      onFocusChange: (value) => questionAddProvider.focusManagerProvider.addQuestionFocusNode.unfocus(),
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        FocusScope.of(context).unfocus();
+                        questionAddProvider.pickImage();
+                      },
+                      icon: Icon(
+                        Icons.camera,
+                        size: ICON_SIZE,
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      FocusScope.of(context).unfocus();
-                      await Future.delayed(Duration(milliseconds: 1000));
+                    IconButton(
+                      onPressed: () async {
+                        FocusScope.of(context).unfocus();
+                        await Future.delayed(Duration(milliseconds: 1000));
 
-                      handleRegister();
-                    },
-                    icon: Icon(
-                      Icons.create_new_folder_outlined,
-                      size: ICON_SIZE,
+                        handleRegister();
+                      },
+                      icon: Icon(
+                        Icons.create_new_folder_outlined,
+                        size: ICON_SIZE,
+                      ),
                     ),
+                  ],
+                ),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white70),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.all(10),
-                margin: EdgeInsets.symmetric(vertical: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white70),
-                  borderRadius: BorderRadius.circular(10),
+                  child: Text(
+                    'ここはみんなが共にする空間です。お互いを尊重し、コミュニティのルールを守って、楽しく健全な交流を作りましょう。思いやりと責任ある行動が、健全なコミュニティを育てます。',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white70),
+                  ),
                 ),
-                child: Text(
-                  'ここはみんなが共にする空間です。お互いを尊重し、コミュニティのルールを守って、楽しく健全な交流を作りましょう。思いやりと責任ある行動が、健全なコミュニティを育てます。',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white70),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  controller: questionAddProvider.textController,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    hintText: '質問を入力してください。',
+                    border: OutlineInputBorder(),
+                  ),
+                  style: TextStyle(fontSize: 18),
                 ),
-              ),
-              TextField(
-                keyboardType: TextInputType.text,
-                controller: questionAddProvider.textController,
-                maxLines: 5,
-                decoration: InputDecoration(
-                  hintText: '質問を入力してください。',
-                  border: OutlineInputBorder(),
-                ),
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 10),
-              Obx(() => renderImageArea()),
-            ],
+                SizedBox(height: 10),
+                Obx(() => renderImageArea()),
+              ],
+            ),
           ),
         ),
       ),

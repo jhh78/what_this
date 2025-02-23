@@ -6,16 +6,28 @@ import 'package:hive/hive.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:whats_this/model/question.dart';
 import 'package:whats_this/model/system.dart';
+import 'package:whats_this/provider/focus_manager.dart';
 import 'package:whats_this/util/constants.dart';
 
 class MyQuestionProvider extends GetxService {
   int currentPage = 1;
   final pagePerCount = 10;
-  PocketBase pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
   String questionTable = 'questions';
 
   RxList<QuestionModel> questionList = <QuestionModel>[].obs;
   RxBool isLoading = false.obs;
+  final FocusManagerProvider focusManagerProvider = Get.put(FocusManagerProvider());
+
+  @override
+  onInit() {
+    super.onInit();
+    focusManagerProvider.myQuestionFocusNode.addListener(() {
+      if (focusManagerProvider.myQuestionFocusNode.hasFocus) {
+        log("?????????????????????????????????????????? > myQuestionFocusNode");
+        fetchInitQuestionList();
+      }
+    });
+  }
 
   fetchInitQuestionList() {
     currentPage = 1;
@@ -26,7 +38,7 @@ class MyQuestionProvider extends GetxService {
   fetchQuestionMadel() async {
     try {
       isLoading.value = true;
-      final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
+      final PocketBase pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
       final Box box = await Hive.openBox(SYSTEM_BOX);
       final SystemConfigModel config = box.get(SYSTEM_CONFIG);
 
@@ -54,6 +66,7 @@ class MyQuestionProvider extends GetxService {
 
   handleDelete(QuestionModel model) async {
     try {
+      PocketBase pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
       await pb.collection(questionTable).delete(model.id);
     } catch (e) {
       log(e.toString());
@@ -62,6 +75,7 @@ class MyQuestionProvider extends GetxService {
 
   handleEdit(QuestionModel model) async {
     try {
+      PocketBase pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
       await pb.collection(questionTable).update(model.id, body: {'contents': '수정된 내용'});
     } catch (e) {
       log(e.toString());

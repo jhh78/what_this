@@ -1,17 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import 'package:whats_this/model/comment.dart';
+import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/widget/atoms/icon_button.dart';
 
 class CommentCardWidget extends StatelessWidget {
-  const CommentCardWidget({
+  CommentCardWidget({
     super.key,
+    required this.commentModel,
     this.onDelete,
     this.onBlock,
     this.onReport,
   });
 
+  final CommentModel commentModel;
+
   final VoidCallback? onDelete;
   final VoidCallback? onBlock;
   final VoidCallback? onReport;
+
+  final UserProvider userProvider = Get.put(UserProvider());
+
+  Future<Widget> renderIconButton() async {
+    if (userProvider.user.value.id == commentModel.user.id) {
+      return Row(
+        children: [
+          if (onDelete != null)
+            IconButtonWidget(
+              color: Colors.red,
+              onPressed: onDelete!,
+              icon: Icons.delete_forever_outlined,
+            ),
+        ],
+      );
+    }
+
+    return Row(
+      children: [
+        if (onBlock != null)
+          IconButtonWidget(
+            color: Colors.red,
+            onPressed: onBlock!,
+            icon: Icons.block,
+          ),
+        if (onReport != null)
+          IconButtonWidget(
+            color: Colors.red,
+            onPressed: onReport!,
+            icon: Icons.notification_important_outlined,
+          ),
+      ],
+    );
+  }
+
+  ImageProvider<Object> getFileImageWidget(CommentModel commentModel) {
+    if (commentModel.user.profile.toString().isEmpty) {
+      return AssetImage('assets/avatar/default.png');
+    }
+
+    final fileUrl =
+        "${dotenv.env['POCKET_BASE_FILE_URL']}${commentModel.user.collectionId}/${commentModel.user.id}/${commentModel.user.profile}";
+    return NetworkImage(fileUrl);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +86,7 @@ class CommentCardWidget extends StatelessWidget {
               Row(
                 children: [
                   CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      'https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295396_1280.png',
-                    ),
+                    backgroundImage: getFileImageWidget(commentModel),
                     radius: 20,
                   ),
                   SizedBox(width: 10),

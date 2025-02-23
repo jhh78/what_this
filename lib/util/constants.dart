@@ -10,3 +10,4 @@ const String ADD_QUESTION = 'add_question';
 const String REPORT_REASON_KIND = "reportReason";
 
 const int ADD_POINT = 10;
+const int MAX_CONTENTS_LENGTH = 250;
