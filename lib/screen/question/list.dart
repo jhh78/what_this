@@ -8,7 +8,7 @@ import 'package:whats_this/provider/question_list.dart';
 import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/widget/atoms/data_not_found.dart';
 import 'package:whats_this/widget/atoms/reason_form.dart';
-import 'package:whats_this/widget/contents_card.dart';
+import 'package:whats_this/widget/question/contents_card.dart';
 
 class QuestionListScreen extends StatelessWidget {
   QuestionListScreen({super.key});
@@ -153,7 +153,7 @@ class QuestionListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Focus(
       focusNode: questionListProvider.focusManagerProvider.questionListFocusNode,
-      onFocusChange: (value) => questionListProvider.focusManagerProvider.questionListFocusNode.unfocus(),
+      onFocusChange: (value) => questionListProvider.focusManagerProvider.unfocusAll(),
       child: Column(
         children: [
           Expanded(

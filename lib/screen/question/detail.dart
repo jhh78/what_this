@@ -5,11 +5,11 @@ import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/util/styles.dart';
 import 'package:whats_this/widget/atoms/data_not_found.dart';
-import 'package:whats_this/widget/comment_card.dart';
-import 'package:whats_this/widget/contents_card.dart';
+import 'package:whats_this/widget/question/comment_card.dart';
+import 'package:whats_this/widget/question/contents_card.dart';
 
-class CommentScreen extends StatelessWidget {
-  CommentScreen({super.key});
+class QuestionDetailScreen extends StatelessWidget {
+  QuestionDetailScreen({super.key});
 
   final HomeProvider homeProvider = Get.put(HomeProvider());
   final CommentListProvider commentListProvider = Get.put(CommentListProvider());

@@ -10,6 +10,27 @@ class FocusManagerProvider extends GetxService {
   final FocusNode questionDetail = FocusNode();
   final FocusNode addQuestionFocusNode = FocusNode();
 
+  List<FocusNode> nodes = [];
+
+  @override
+  void onInit() {
+    super.onInit();
+    nodes = [
+      profileFocusNode,
+      questionListFocusNode,
+      commentFocusNode,
+      myQuestionFocusNode,
+      questionDetail,
+      addQuestionFocusNode,
+    ];
+  }
+
+  void unfocusAll() {
+    for (var element in nodes) {
+      element.unfocus();
+    }
+  }
+
   void changeFocusNode(String route) {
     switch (route) {
       case USER_INFO:

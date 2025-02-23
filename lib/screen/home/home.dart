@@ -2,12 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/provider/home.dart';
-import 'package:whats_this/screen/add_question.dart';
-import 'package:whats_this/screen/comment.dart';
-import 'package:whats_this/screen/my_question.dart';
-import 'package:whats_this/screen/question_list.dart';
-import 'package:whats_this/screen/sign_in.dart';
-import 'package:whats_this/screen/user_info.dart';
+import 'package:whats_this/screen/question/add.dart';
+import 'package:whats_this/screen/question/detail.dart';
+import 'package:whats_this/screen/my_question/my_question.dart';
+import 'package:whats_this/screen/question/list.dart';
+import 'package:whats_this/screen/signin/sign_in.dart';
+import 'package:whats_this/screen/profile/user_info.dart';
 import 'package:whats_this/service/auth.dart';
 import 'package:whats_this/util/constants.dart';
 
@@ -26,9 +26,9 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   UserInfoScreen(),
                   QuestionListScreen(),
-                  CommentScreen(),
+                  QuestionDetailScreen(),
                   MyQuestionScreen(),
-                  AddQuestionScreen(),
+                  QuestionAddScreen(),
                 ],
               )),
         ),

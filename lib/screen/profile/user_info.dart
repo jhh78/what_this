@@ -32,7 +32,7 @@ class UserInfoScreen extends StatelessWidget {
 
     return Focus(
       focusNode: userProvider.focusManagerProvider.profileFocusNode,
-      onFocusChange: (value) => userProvider.focusManagerProvider.profileFocusNode.unfocus(),
+      onFocusChange: (value) => userProvider.focusManagerProvider.unfocusAll(),
       child: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

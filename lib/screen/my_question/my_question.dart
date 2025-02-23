@@ -5,7 +5,7 @@ import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/provider/my_question.dart';
 import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/widget/atoms/data_not_found.dart';
-import 'package:whats_this/widget/contents_card.dart';
+import 'package:whats_this/widget/question/contents_card.dart';
 
 class MyQuestionScreen extends StatelessWidget {
   MyQuestionScreen({super.key});
@@ -89,7 +89,7 @@ class MyQuestionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Focus(
       focusNode: myQuestionProvider.focusManagerProvider.myQuestionFocusNode,
-      onFocusChange: (value) => myQuestionProvider.focusManagerProvider.myQuestionFocusNode.unfocus(),
+      onFocusChange: (value) => myQuestionProvider.focusManagerProvider.unfocusAll(),
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(

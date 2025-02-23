@@ -6,8 +6,8 @@ import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/service/camera.dart';
 import 'package:whats_this/util/styles.dart';
 
-class AddQuestionScreen extends StatelessWidget {
-  AddQuestionScreen({super.key});
+class QuestionAddScreen extends StatelessWidget {
+  QuestionAddScreen({super.key});
 
   final HomeProvider homeProvider = Get.put(HomeProvider());
   final QuestionAddProvider questionAddProvider = Get.put(QuestionAddProvider());
@@ -58,7 +58,6 @@ class AddQuestionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Focus(
       focusNode: questionAddProvider.focusManagerProvider.addQuestionFocusNode,
-      onFocusChange: (value) => questionAddProvider.focusManagerProvider.addQuestionFocusNode.unfocus(),
       child: Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(

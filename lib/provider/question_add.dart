@@ -76,5 +76,6 @@ class QuestionAddProvider extends GetxService {
     );
 
     init();
+    focusManagerProvider.changeFocusNode(QUESTION_LIST);
   }
 }
