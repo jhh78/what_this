@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:whats_this/model/comment.dart';
+import 'package:whats_this/provider/question/detail.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/widget/atoms/icon_button.dart';
 
@@ -21,8 +23,32 @@ class CommentCardWidget extends StatelessWidget {
   final VoidCallback? onReport;
 
   final UserProvider userProvider = Get.put(UserProvider());
+  final QuestionDetailProvider questionDetailProvider = Get.put(QuestionDetailProvider());
 
-  Future<Widget> renderIconButton() async {
+  Widget renderIconButton() {
+    return Row(
+      children: [
+        if (onDelete != null)
+          IconButtonWidget(
+            color: Colors.red,
+            onPressed: onDelete!,
+            icon: Icons.delete_forever_outlined,
+          ),
+        if (onBlock != null)
+          IconButtonWidget(
+            color: Colors.red,
+            onPressed: onBlock!,
+            icon: Icons.block,
+          ),
+        if (onReport != null)
+          IconButtonWidget(
+            color: Colors.red,
+            onPressed: onReport!,
+            icon: Icons.notification_important_outlined,
+          ),
+      ],
+    );
+
     if (userProvider.user.value.id == commentModel.user.id) {
       return Row(
         children: [
@@ -91,63 +117,40 @@ class CommentCardWidget extends StatelessWidget {
                   ),
                   SizedBox(width: 10),
                   Text(
-                    'User Name',
+                    commentModel.user.username,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
                   ),
                   Spacer(),
-                  Row(
-                    children: [
-                      IconButtonWidget(
-                        color: Colors.lightBlue,
-                        onPressed: () {},
-                        icon: Icons.thumb_up,
-                      ),
-                      Text('100', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black)),
-                      IconButtonWidget(
-                        color: Colors.red,
-                        onPressed: () {},
-                        icon: Icons.thumb_down,
-                      ),
-                      Text('10', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black)),
-                      PopupMenuButton<String>(
-                        color: Colors.black87,
-                        iconColor: Colors.black87,
-                        onSelected: (String result) {
-                          switch (result) {
-                            case 'delete':
-                              if (onDelete != null) onDelete!();
-                              break;
-                            case 'block':
-                              if (onBlock != null) onBlock!();
-                              break;
-                            case 'report':
-                              if (onReport != null) onReport!();
-                              break;
-                          }
-                        },
-                        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                            value: 'delete',
-                            child: Text('Delete'),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: 'block',
-                            child: Text('Block'),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: 'report',
-                            child: Text('Report'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                  renderIconButton(),
                 ],
               ),
               SizedBox(height: 10),
               Text(
-                'Content text...',
+                commentModel.comment,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButtonWidget(
+                    color: Colors.lightBlue,
+                    onPressed: () => questionDetailProvider.thumbUpItem(model: commentModel),
+                    icon: Icons.thumb_up,
+                  ),
+                  Text(
+                    NumberFormat("#,###").format(commentModel.thumb_up),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black),
+                  ),
+                  IconButtonWidget(
+                    color: Colors.red,
+                    onPressed: () => questionDetailProvider.thumbDownItem(model: commentModel),
+                    icon: Icons.thumb_down,
+                  ),
+                  Text(
+                    NumberFormat("#,###").format(commentModel.thumb_down),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black),
+                  ),
+                ],
               ),
             ],
           ),

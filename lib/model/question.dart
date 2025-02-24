@@ -21,7 +21,7 @@ class QuestionModel {
     required this.updated,
   });
 
-  factory QuestionModel.emptyMode() {
+  factory QuestionModel.emptyModel() {
     return QuestionModel(
       collectionID: '',
       id: '',
@@ -49,7 +49,7 @@ class QuestionModel {
     return QuestionModel(
       collectionID: json['collectionID'],
       id: json['id'],
-      user: json['key'],
+      user: json['user'] ? UserModel.fromJson(json['user']) : UserModel.emptyModel(),
       contents: json['contents'],
       files: json['files'],
       created: json['created'],

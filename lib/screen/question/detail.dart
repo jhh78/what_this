@@ -25,27 +25,25 @@ class QuestionDetailScreen extends StatelessWidget {
       return DataNotFoundWidget();
     }
 
-    return Obx(
-      () => ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: commentListProvider.commentList.length,
-        itemBuilder: (context, index) {
-          final comment = commentListProvider.commentList[index];
-          return CommentCardWidget(
-            commentModel: comment,
-            onDelete: () {
-              commentListProvider.deleteItem(comment.id);
-            },
-            onBlock: () {
-              commentListProvider.blockItem(comment.id);
-            },
-            onReport: () {
-              commentListProvider.reportItem(comment.id);
-            },
-          );
-        },
-      ),
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: commentListProvider.commentList.length,
+      itemBuilder: (context, index) {
+        final comment = commentListProvider.commentList[index];
+        return CommentCardWidget(
+          commentModel: comment,
+          onDelete: () {
+            commentListProvider.deleteItem(comment.id);
+          },
+          onBlock: () {
+            commentListProvider.blockItem(comment.id);
+          },
+          onReport: () {
+            commentListProvider.reportItem(comment.id);
+          },
+        );
+      },
     );
   }
 
@@ -66,7 +64,7 @@ class QuestionDetailScreen extends StatelessWidget {
             Obx(
               () => ContentsCardWidget(questionModel: commentListProvider.questionModel.value),
             ),
-            renderCommentList(),
+            Obx(() => renderCommentList()),
           ],
         ),
       ),

@@ -67,7 +67,7 @@ class QuestionListProvider extends GetxService {
       questionList.retainWhere((x) => ids.remove(x.id));
 
       if (response.totalItems > currentPage * pagePerCount) {
-        questionList.add(QuestionModel.emptyMode());
+        questionList.add(QuestionModel.emptyModel());
       }
     } catch (e, stackTrace) {
       log("fetchQuestionMadel error: $stackTrace");
@@ -76,7 +76,7 @@ class QuestionListProvider extends GetxService {
 
   handleNextPage() {
     currentPage++;
-    questionList.removeWhere((element) => element.id == QuestionModel.emptyMode().id);
+    questionList.removeWhere((element) => element.id == QuestionModel.emptyModel().id);
     fetchQuestionMadel();
   }
 

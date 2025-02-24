@@ -10,43 +10,42 @@ import 'package:whats_this/provider/user.dart';
 
 class QuestionDetailProvider extends GetxService {
   RxList<CommentModel> commentList = <CommentModel>[].obs;
-  Rx<QuestionModel> questionModel = QuestionModel.emptyMode().obs;
+  Rx<QuestionModel> questionModel = QuestionModel.emptyModel().obs;
 
   RxBool isLoading = false.obs;
   int currentPage = 1;
+  int pagePerCount = 10;
   final UserProvider userProvider = Get.put(UserProvider());
   final TextEditingController commentController = TextEditingController();
   final String tableName = 'comment';
 
-  void init() {
+  Future<void> init() async {
     commentList.clear();
     currentPage = 1;
   }
 
-  void setQuestionModel(QuestionModel questionModel) {
+  Future<void> setQuestionModel(QuestionModel questionModel) async {
     this.questionModel.value = questionModel;
+    init();
+    fetchCommentData();
   }
 
   void fetchCommentData() async {
     try {
-      isLoading.value = true;
       final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
 
       final resultList = await pb.collection('comment').getList(
             page: currentPage,
-            perPage: 20,
+            perPage: pagePerCount,
+            sort: '-created',
             expand: "question,user",
             filter: 'question="${questionModel.value.id}"',
           );
 
-      commentList.addAll(resultList.items.map((e) => CommentModel.fromRecordModel(e)).toList());
-
-      log(resultList.toString());
+      commentList.addAll(resultList.items.map((e) => CommentModel.fromRecordModel(e)));
     } catch (e, stack) {
       log(e.toString());
       log(stack.toString());
-    } finally {
-      isLoading.value = false;
     }
   }
 
@@ -57,19 +56,85 @@ class QuestionDetailProvider extends GetxService {
       final body = <String, dynamic>{
         "question": questionModel.value.id,
         "user": userProvider.user.value.id,
-        "comment": "test",
+        "comment": commentController.text,
       };
 
       await pb.collection(tableName).create(body: body);
-      commentController.clear();
+      init();
+      fetchCommentData();
     } catch (e, stack) {
       log(stack.toString());
     }
   }
 
-  Future<void> blockItem(String commentID) async {}
+  Future<void> blockItem(String commentID) async {
+    log('blockItem');
+    // try {
+    //   final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
 
-  Future<void> deleteItem(String commentID) async {}
+    //   await pb.collection(tableName).delete(commentID);
+    //   commentList.removeWhere((element) => element.id == commentID);
+    // } catch (e, stack) {
+    //   log(stack.toString());
+    // }
+  }
 
-  Future<void> reportItem(String commentID) async {}
+  Future<void> thumbUpItem({required CommentModel model}) async {
+    log('thumbUpItem');
+    try {
+      final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
+      final body = <String, dynamic>{
+        "thumb_up": model.thumb_up + 1,
+      };
+
+      await pb.collection('comment').update(model.id, body: body);
+
+      commentList.value = commentList.map((e) {
+        if (e.id == model.id) {
+          e.thumb_up++;
+        }
+        return e;
+      }).toList();
+    } catch (e, stack) {
+      log(e.toString());
+      log(stack.toString());
+    }
+  }
+
+  Future<void> thumbDownItem({required CommentModel model}) async {
+    log('thumbDownItem');
+    try {
+      final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
+      final body = <String, dynamic>{
+        "thumb_down": model.thumb_down + 1,
+      };
+
+      await pb.collection('comment').update(model.id, body: body);
+
+      commentList.value = commentList.map((e) {
+        if (e.id == model.id) {
+          e.thumb_down++;
+        }
+        return e;
+      }).toList();
+    } catch (e, stack) {
+      log(e.toString());
+      log(stack.toString());
+    }
+  }
+
+  Future<void> deleteItem(String commentID) async {
+    try {
+      final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
+
+      await pb.collection(tableName).delete(commentID);
+      commentList.removeWhere((element) => element.id == commentID);
+    } catch (e, stack) {
+      log(stack.toString());
+    }
+  }
+
+  Future<void> reportItem(String commentID) async {
+    log('reportItem');
+  }
 }

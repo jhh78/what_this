@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:pocketbase/pocketbase.dart';
 import 'package:whats_this/model/question.dart';
 import 'package:whats_this/model/user.dart';
@@ -27,7 +29,7 @@ class CommentModel {
   factory CommentModel.fromRecordModel(RecordModel response) {
     return CommentModel(
       id: response.id,
-      question: QuestionModel.fromJson(response.get('expand')['question']),
+      question: QuestionModel.emptyModel(),
       user: UserModel.fromJson(response.get('expand')['user']),
       comment: response.get('comment'),
       thumb_up: response.get('thumb_up'),
