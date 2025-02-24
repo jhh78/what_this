@@ -6,7 +6,6 @@ import 'package:hive/hive.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:whats_this/model/question.dart';
 import 'package:whats_this/model/system.dart';
-import 'package:whats_this/provider/focus_manager.dart';
 import 'package:whats_this/util/constants.dart';
 
 class QuestionListProvider extends GetxService {
@@ -17,18 +16,10 @@ class QuestionListProvider extends GetxService {
 
   RxList<QuestionModel> questionList = <QuestionModel>[].obs;
   RxBool isLoading = false.obs;
-  final FocusManagerProvider focusManagerProvider = Get.put(FocusManagerProvider());
 
   @override
   void onInit() {
     super.onInit();
-
-    focusManagerProvider.questionListFocusNode.addListener(() {
-      if (focusManagerProvider.questionListFocusNode.hasFocus) {
-        log("?????????????????????????????????????????? > questionListFocusNode");
-        fetchInitQuestionList();
-      }
-    });
 
     pb.collection(questionTable).subscribe(
       '*',

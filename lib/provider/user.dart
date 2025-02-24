@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,7 +8,6 @@ import 'package:hive/hive.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:whats_this/model/system.dart';
 import 'package:whats_this/model/user.dart';
-import 'package:whats_this/provider/focus_manager.dart';
 import 'package:whats_this/service/camera.dart';
 import 'package:whats_this/util/constants.dart';
 
@@ -20,20 +18,11 @@ class UserProvider extends GetxService {
 
   final tableName = 'user';
   final CameraService cameraService = CameraService();
-  final FocusManagerProvider focusManagerProvider = Get.put(FocusManagerProvider());
 
   @override
   void onInit() {
     super.onInit();
-
-    focusManagerProvider.profileFocusNode.addListener(() {
-      if (focusManagerProvider.profileFocusNode.hasFocus) {
-        log('?????????????????????????????????????????? > profileFocusNode');
-        fetchUserData();
-      }
-    });
-
-    focusManagerProvider.changeFocusNode(USER_INFO);
+    fetchUserData();
   }
 
   Future<void> pickImage() async {

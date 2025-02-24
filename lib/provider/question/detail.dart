@@ -8,7 +8,7 @@ import 'package:whats_this/model/comment.dart';
 import 'package:whats_this/model/question.dart';
 import 'package:whats_this/provider/user.dart';
 
-class CommentListProvider extends GetxService {
+class QuestionDetailProvider extends GetxService {
   RxList<CommentModel> commentList = <CommentModel>[].obs;
   Rx<QuestionModel> questionModel = QuestionModel.emptyMode().obs;
 

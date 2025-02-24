@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/model/question.dart';
-import 'package:whats_this/provider/comment_list.dart';
+import 'package:whats_this/provider/question/detail.dart';
 import 'package:whats_this/provider/form.dart';
 import 'package:whats_this/provider/home.dart';
-import 'package:whats_this/provider/question_list.dart';
+import 'package:whats_this/provider/question/list.dart';
 import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/widget/atoms/data_not_found.dart';
 import 'package:whats_this/widget/atoms/reason_form.dart';
@@ -15,7 +15,7 @@ class QuestionListScreen extends StatelessWidget {
   final HomeProvider homeProvider = Get.put(HomeProvider());
   final QuestionListProvider questionListProvider = Get.put(QuestionListProvider());
   final FormProvider formProvider = Get.put(FormProvider());
-  final CommentListProvider commentListProvider = Get.put(CommentListProvider());
+  final QuestionDetailProvider commentListProvider = Get.put(QuestionDetailProvider());
 
   void handleOnBlock({required BuildContext context, required QuestionModel question}) {
     Get.defaultDialog(
@@ -151,16 +151,12 @@ class QuestionListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Focus(
-      focusNode: questionListProvider.focusManagerProvider.questionListFocusNode,
-      onFocusChange: (value) => questionListProvider.focusManagerProvider.unfocusAll(),
-      child: Column(
-        children: [
-          Expanded(
-            child: Obx(() => renderListContents(context)),
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        Expanded(
+          child: Obx(() => renderListContents(context)),
+        ),
+      ],
     );
   }
 }

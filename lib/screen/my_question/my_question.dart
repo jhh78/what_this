@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/model/question.dart';
 import 'package:whats_this/provider/home.dart';
-import 'package:whats_this/provider/my_question.dart';
+import 'package:whats_this/provider/question/my_question.dart';
 import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/widget/atoms/data_not_found.dart';
 import 'package:whats_this/widget/question/contents_card.dart';
@@ -87,28 +87,24 @@ class MyQuestionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Focus(
-      focusNode: myQuestionProvider.focusManagerProvider.myQuestionFocusNode,
-      onFocusChange: (value) => myQuestionProvider.focusManagerProvider.unfocusAll(),
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text(
-              'マイ質問',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: Colors.white,
-                  ),
-            ),
-          ),
-          body: SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: Obx(() => renderQuestionContents()),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            'マイ質問',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  color: Colors.white,
                 ),
-              ],
-            ),
+          ),
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: Obx(() => renderQuestionContents()),
+              ),
+            ],
           ),
         ),
       ),

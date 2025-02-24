@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:whats_this/provider/comment_list.dart';
+import 'package:whats_this/provider/question/detail.dart';
 import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/util/styles.dart';
@@ -12,7 +12,7 @@ class QuestionDetailScreen extends StatelessWidget {
   QuestionDetailScreen({super.key});
 
   final HomeProvider homeProvider = Get.put(HomeProvider());
-  final CommentListProvider commentListProvider = Get.put(CommentListProvider());
+  final QuestionDetailProvider commentListProvider = Get.put(QuestionDetailProvider());
 
   Widget renderCommentList() {
     if (commentListProvider.isLoading.value) {
