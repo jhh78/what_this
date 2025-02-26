@@ -6,6 +6,7 @@ import 'package:whats_this/provider/form.dart';
 import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/provider/question/list.dart';
 import 'package:whats_this/util/constants.dart';
+import 'package:whats_this/util/dialog.dart';
 import 'package:whats_this/widget/atoms/data_not_found.dart';
 import 'package:whats_this/widget/atoms/reason_form.dart';
 import 'package:whats_this/widget/question/contents_card.dart';
@@ -15,80 +16,50 @@ class QuestionListScreen extends StatelessWidget {
   final HomeProvider homeProvider = Get.put(HomeProvider());
   final QuestionListProvider questionListProvider = Get.put(QuestionListProvider());
   final FormProvider formProvider = Get.put(FormProvider());
-  final QuestionDetailProvider commentListProvider = Get.put(QuestionDetailProvider());
+  final QuestionDetailProvider questionDetailProvider = Get.put(QuestionDetailProvider());
 
-  void handleOnBlock({required BuildContext context, required QuestionModel question}) {
-    Get.defaultDialog(
+  void handleOnBlock({required QuestionModel question}) {
+    showConfirmDialog(
       title: 'ブロック',
       middleText: "選択したコンテンツをブロックしますか？",
-      actions: [
-        TextButton(
-          onPressed: () {
-            Get.back();
-          },
-          child: Text('キャンセル'),
-        ),
-        TextButton(
-          onPressed: () {
-            questionListProvider.handleBlock(question);
-            Get.back();
-          },
-          child: Text('ブロック'),
-        ),
-      ],
+      onConfirm: () {
+        questionListProvider.handleBlock(question);
+        Get.back();
+      },
     );
   }
 
   void handleOnReport({required BuildContext context, required QuestionModel question}) {
-    Get.defaultDialog(
+    showConfirmDialog(
       title: '通報',
       middleText: "通報理由を選択してください。",
       content: Padding(
         padding: const EdgeInsets.only(left: 20, right: 20),
         child: ReasonFormWidget(),
       ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Get.back();
-            FocusScope.of(context).unfocus();
-          },
-          child: Text('キャンセル'),
-        ),
-        TextButton(
-          onPressed: () {
-            if (!(formProvider.formKey.currentState?.validate() ?? false)) {
-              return;
-            }
+      onClose: () {
+        FocusScope.of(context).unfocus();
+        Get.back();
+      },
+      onConfirm: () {
+        if (!(formProvider.formKey.currentState?.validate() ?? false)) {
+          return;
+        }
 
-            questionListProvider.handleReport(question, formProvider.getData(REPORT_REASON_KIND));
-            Get.back();
-          },
-          child: Text('通報'),
-        ),
-      ],
+        questionListProvider.handleReport(question, formProvider.getData(REPORT_REASON_KIND));
+        Get.back();
+      },
     );
   }
 
-  void handleOnDelete({required BuildContext context, required QuestionModel question}) {
-    Get.defaultDialog(
+  void handleOnDelete({required QuestionModel question}) {
+    showConfirmDialog(
       title: '削除',
       middleText: "選択したコンテンツを削除しますか？",
-      actions: [
-        TextButton(
-          onPressed: () {
-            Get.back();
-          },
-          child: Text('キャンセル'),
-        ),
-        TextButton(
-          onPressed: () {
-            questionListProvider.handleDelete(question);
-            Get.back();
-          },
-          child: Text('削除'),
-        ),
-      ],
+      onConfirm: () {
+        questionListProvider.handleDelete(question);
+        Get.back();
+      },
     );
   }
 
@@ -135,14 +106,14 @@ class QuestionListScreen extends StatelessWidget {
         final question = questionListProvider.questionList[index];
         return InkWell(
           onTap: () {
-            commentListProvider.setQuestionModel(question);
+            questionDetailProvider.setQuestionModel(question);
             homeProvider.changeScreenIndex(QUESTION_DETAIL);
           },
           child: ContentsCardWidget(
             questionModel: question,
-            onBlock: () => handleOnBlock(context: context, question: question),
+            onBlock: () => handleOnBlock(question: question),
             onReport: () => handleOnReport(context: context, question: question),
-            onDelete: () => handleOnDelete(context: context, question: question),
+            onDelete: () => handleOnDelete(question: question),
           ),
         );
       },
