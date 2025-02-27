@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:whats_this/model/comment.dart';
 import 'package:whats_this/provider/question/detail.dart';
 import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/util/constants.dart';
+import 'package:whats_this/util/dialog.dart';
 import 'package:whats_this/util/styles.dart';
 import 'package:whats_this/widget/atoms/data_not_found.dart';
 import 'package:whats_this/widget/question/comment_card.dart';
@@ -13,6 +15,38 @@ class QuestionDetailScreen extends StatelessWidget {
 
   final HomeProvider homeProvider = Get.put(HomeProvider());
   final QuestionDetailProvider commentListProvider = Get.put(QuestionDetailProvider());
+
+  void handleDelete(CommentModel comment) {
+    showConfirmDialog(
+        title: "確認",
+        middleText: "このコメントを削除しますか？",
+        onConfirm: () {
+          commentListProvider.deleteItem(comment.id);
+          Get.back();
+        });
+  }
+
+  void handleBlock(CommentModel comment) {
+    showConfirmDialog(
+      title: "確認",
+      middleText: "このコメントをブロックしますか？",
+      onConfirm: () {
+        commentListProvider.blockItem(comment.id);
+        Get.back();
+      },
+    );
+  }
+
+  void handleReport(CommentModel comment) {
+    showConfirmDialog(
+      title: "確認",
+      middleText: "このコメントを通報しますか？",
+      onConfirm: () {
+        commentListProvider.reportItem(comment.id);
+        Get.back();
+      },
+    );
+  }
 
   Widget renderCommentList() {
     if (commentListProvider.isLoading.value) {
@@ -33,15 +67,9 @@ class QuestionDetailScreen extends StatelessWidget {
         final comment = commentListProvider.commentList[index];
         return CommentCardWidget(
           commentModel: comment,
-          onDelete: () {
-            commentListProvider.deleteItem(comment.id);
-          },
-          onBlock: () {
-            commentListProvider.blockItem(comment.id);
-          },
-          onReport: () {
-            commentListProvider.reportItem(comment.id);
-          },
+          onDelete: () => handleDelete(comment),
+          onBlock: () => handleBlock(comment),
+          onReport: () => handleReport(comment),
         );
       },
     );
@@ -54,7 +82,11 @@ class QuestionDetailScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            homeProvider.changeScreenIndex(QUESTION_LIST);
+            if (homeProvider.entryPoint == QUESTION_LIST) {
+              homeProvider.changeScreenIndex(QUESTION_LIST);
+            } else if (homeProvider.entryPoint == MY_QUESTION) {
+              homeProvider.changeScreenIndex(MY_QUESTION);
+            }
           },
         ),
       ),

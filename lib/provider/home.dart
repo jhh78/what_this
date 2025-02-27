@@ -9,6 +9,7 @@ import 'package:whats_this/util/constants.dart';
 class HomeProvider extends GetxService {
   final RxInt currentIndex = 0.obs;
   final RxInt menuIndex = 0.obs;
+  String entryPoint = '';
 
   final QuestionListProvider questionListProvider = Get.put(QuestionListProvider());
   final MyQuestionProvider myQuestionProvider = Get.put(MyQuestionProvider());
@@ -27,10 +28,12 @@ class HomeProvider extends GetxService {
       menuIndex.value = 0;
       userProvider.fetchUserData();
     } else if (screen == QUESTION_LIST) {
+      entryPoint = QUESTION_LIST;
       currentIndex.value = 1;
       menuIndex.value = 1;
       questionListProvider.fetchInitQuestionList();
     } else if (screen == MY_QUESTION) {
+      entryPoint = MY_QUESTION;
       currentIndex.value = 3;
       menuIndex.value = 2;
       myQuestionProvider.fetchInitQuestionList();

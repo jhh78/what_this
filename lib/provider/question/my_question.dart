@@ -40,6 +40,7 @@ class MyQuestionProvider extends GetxService {
 
       questionList.addAll(response.items.map((e) => QuestionModel.fromRecordModel(e)).toList());
     } catch (e, stackTrace) {
+      log(e.toString());
       log(stackTrace.toString());
     } finally {
       isLoading.value = false;
@@ -55,8 +56,10 @@ class MyQuestionProvider extends GetxService {
     try {
       PocketBase pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
       await pb.collection(questionTable).delete(model.id);
-    } catch (e) {
+      questionList.removeWhere((element) => element.id == model.id);
+    } catch (e, stackTrace) {
       log(e.toString());
+      log(stackTrace.toString());
     }
   }
 
@@ -64,8 +67,9 @@ class MyQuestionProvider extends GetxService {
     try {
       PocketBase pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
       await pb.collection(questionTable).update(model.id, body: {'contents': '수정된 내용'});
-    } catch (e) {
+    } catch (e, stackTrace) {
       log(e.toString());
+      log(stackTrace.toString());
     }
   }
 }

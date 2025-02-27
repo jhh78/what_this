@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/model/question.dart';
 import 'package:whats_this/provider/home.dart';
+import 'package:whats_this/provider/question/detail.dart';
 import 'package:whats_this/provider/question/my_question.dart';
 import 'package:whats_this/util/constants.dart';
+import 'package:whats_this/util/dialog.dart';
 import 'package:whats_this/widget/atoms/data_not_found.dart';
 import 'package:whats_this/widget/question/contents_card.dart';
 
@@ -11,27 +13,16 @@ class MyQuestionScreen extends StatelessWidget {
   MyQuestionScreen({super.key});
   final HomeProvider homeProvider = Get.put(HomeProvider());
   final MyQuestionProvider myQuestionProvider = Get.put(MyQuestionProvider());
+  final QuestionDetailProvider questionDetailProvider = Get.put(QuestionDetailProvider());
 
   void handleOnDelete(QuestionModel question) {
-    Get.defaultDialog(
-      title: '削除',
-      middleText: "選択したコンテンツを削除しますか？",
-      actions: [
-        TextButton(
-          onPressed: () {
-            Get.back();
-          },
-          child: Text('キャンセル'),
-        ),
-        TextButton(
-          onPressed: () {
-            myQuestionProvider.handleDelete(question);
-            Get.back();
-          },
-          child: Text('削除'),
-        ),
-      ],
-    );
+    showConfirmDialog(
+        title: '削除',
+        middleText: "選択したコンテンツを削除しますか？",
+        onConfirm: () {
+          myQuestionProvider.handleDelete(question);
+          Get.back();
+        });
   }
 
   Widget renderQuestionContents() {
@@ -74,6 +65,7 @@ class MyQuestionScreen extends StatelessWidget {
         final question = myQuestionProvider.questionList[index];
         return InkWell(
           onTap: () {
+            questionDetailProvider.setQuestionModel(question);
             homeProvider.changeScreenIndex(QUESTION_DETAIL);
           },
           child: ContentsCardWidget(
