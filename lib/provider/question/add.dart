@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:pocketbase/pocketbase.dart';
 import 'package:whats_this/model/system.dart';
 import 'package:whats_this/provider/user.dart';
-import 'package:whats_this/service/camera.dart';
+import 'package:whats_this/service/vender/camera.dart';
 import 'package:whats_this/util/constants.dart';
 
 class QuestionAddProvider extends GetxService {

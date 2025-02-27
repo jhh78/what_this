@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/screen/home/home.dart';
-import 'package:whats_this/service/auth.dart';
+import 'package:whats_this/service/vender/auth.dart';
 
 class SignInScreen extends StatelessWidget {
   SignInScreen({super.key});

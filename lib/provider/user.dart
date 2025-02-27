@@ -8,7 +8,7 @@ import 'package:hive/hive.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:whats_this/model/system.dart';
 import 'package:whats_this/model/user.dart';
-import 'package:whats_this/service/camera.dart';
+import 'package:whats_this/service/vender/camera.dart';
 import 'package:whats_this/util/constants.dart';
 
 class UserProvider extends GetxService {

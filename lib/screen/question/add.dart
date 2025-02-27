@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/provider/question/add.dart';
 import 'package:whats_this/provider/user.dart';
-import 'package:whats_this/service/camera.dart';
+import 'package:whats_this/service/vender/camera.dart';
 import 'package:whats_this/util/styles.dart';
 
 class QuestionAddScreen extends StatelessWidget {
