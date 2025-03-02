@@ -10,7 +10,6 @@ import 'package:whats_this/util/constants.dart';
 
 class MyQuestionProvider extends GetxService {
   int currentPage = 1;
-  final pagePerCount = 10;
   String questionTable = 'questions';
 
   RxList<QuestionModel> questionList = <QuestionModel>[].obs;

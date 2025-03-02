@@ -17,7 +17,6 @@ class QuestionDetailProvider extends GetxService {
 
   RxBool isLoading = false.obs;
   int currentPage = 1;
-  int pagePerCount = 3;
   final UserProvider userProvider = Get.put(UserProvider());
   final TextEditingController commentController = TextEditingController();
   final String tableName = 'comment';
@@ -46,7 +45,7 @@ class QuestionDetailProvider extends GetxService {
 
       final response = await pb.collection('comment').getList(
             page: currentPage,
-            perPage: pagePerCount,
+            perPage: PAGE_PER_COUNT,
             sort: '-created',
             expand: "question,user",
             filter: 'question="${questionModel.value.id}" && $filterCondition',
@@ -56,7 +55,7 @@ class QuestionDetailProvider extends GetxService {
       final ids = commentList.map((e) => e.id).toSet();
       commentList.retainWhere((x) => ids.remove(x.id));
 
-      if (response.totalItems > currentPage * pagePerCount) {
+      if (response.totalItems > currentPage * PAGE_PER_COUNT) {
         commentList.add(CommentModel.emptyModel());
       }
     } catch (e, stack) {

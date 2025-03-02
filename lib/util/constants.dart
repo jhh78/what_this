@@ -11,3 +11,4 @@ const String REPORT_REASON_KIND = "reportReason";
 
 const int ADD_POINT = 10;
 const int MAX_CONTENTS_LENGTH = 250;
+const int PAGE_PER_COUNT = 10;
