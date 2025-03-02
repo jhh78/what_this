@@ -81,6 +81,7 @@ class QuestionDetailScreen extends StatelessWidget {
         final comment = questionDetailProvider.commentList[index];
         return CommentCardWidget(
           commentModel: comment,
+          onNextPage: () => questionDetailProvider.handleNextPage(),
           onDelete: () => handleDelete(comment),
           onBlock: () => handleBlock(comment),
           onReport: () => handleReport(comment),
@@ -108,7 +109,9 @@ class QuestionDetailScreen extends StatelessWidget {
         child: Column(
           children: [
             Obx(
-              () => ContentsCardWidget(questionModel: questionDetailProvider.questionModel.value),
+              () => ContentsCardWidget(
+                questionModel: questionDetailProvider.questionModel.value,
+              ),
             ),
             Obx(() => renderCommentList()),
           ],

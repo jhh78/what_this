@@ -6,6 +6,7 @@ import 'package:whats_this/model/question.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/util/util.dart';
 import 'package:whats_this/widget/atoms/icon_button.dart';
+import 'package:whats_this/widget/atoms/next_page_button.dart';
 
 class ContentsCardWidget extends StatelessWidget {
   ContentsCardWidget({
@@ -14,9 +15,11 @@ class ContentsCardWidget extends StatelessWidget {
     this.onDelete,
     this.onBlock,
     this.onReport,
+    this.nextPage,
   });
 
   final QuestionModel questionModel;
+  final VoidCallback? nextPage;
   final VoidCallback? onDelete;
   final VoidCallback? onBlock;
   final VoidCallback? onReport;
@@ -93,6 +96,14 @@ class ContentsCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (questionModel.id.isEmpty) {
+      return NextPageButtonWidget(onTab: () {
+        if (nextPage != null) {
+          nextPage!();
+        }
+      });
+    }
+
     return Container(
       margin: EdgeInsets.all(10.0),
       child: Card(

@@ -77,32 +77,6 @@ class QuestionListScreen extends StatelessWidget {
     return ListView.builder(
       itemCount: questionListProvider.questionList.length,
       itemBuilder: (context, index) {
-        if (questionListProvider.questionList[index].id.isEmpty) {
-          return Container(
-            margin: EdgeInsets.all(10.0),
-            child: InkWell(
-              onTap: questionListProvider.handleNextPage,
-              child: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                  side: BorderSide(color: Colors.blueAccent.withAlpha(100), width: 2),
-                ),
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Center(
-                    child: Text("もっと見る",
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Colors.black,
-                            )),
-                  ),
-                ),
-              ),
-            ),
-          );
-        }
-
         final question = questionListProvider.questionList[index];
         return InkWell(
           onTap: () {
@@ -111,6 +85,7 @@ class QuestionListScreen extends StatelessWidget {
           },
           child: ContentsCardWidget(
             questionModel: question,
+            nextPage: () => questionListProvider.handleNextPage(),
             onBlock: () => handleOnBlock(question: question),
             onReport: () => handleOnReport(context: context, question: question),
             onDelete: () => handleOnDelete(question: question),

@@ -24,6 +24,19 @@ class CommentModel {
     required this.updated,
   });
 
+  factory CommentModel.emptyModel() {
+    return CommentModel(
+      id: '',
+      question: QuestionModel.emptyModel(),
+      user: UserModel.emptyModel(),
+      comment: '',
+      thumb_up: 0,
+      thumb_down: 0,
+      created: '',
+      updated: '',
+    );
+  }
+
   factory CommentModel.fromRecordModel(RecordModel response) {
     return CommentModel(
       id: response.id,

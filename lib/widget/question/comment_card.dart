@@ -6,6 +6,7 @@ import 'package:whats_this/model/comment.dart';
 import 'package:whats_this/provider/question/detail.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/widget/atoms/icon_button.dart';
+import 'package:whats_this/widget/atoms/next_page_button.dart';
 
 class CommentCardWidget extends StatelessWidget {
   CommentCardWidget({
@@ -14,10 +15,11 @@ class CommentCardWidget extends StatelessWidget {
     this.onDelete,
     this.onBlock,
     this.onReport,
+    this.onNextPage,
   });
 
   final CommentModel commentModel;
-
+  final VoidCallback? onNextPage;
   final VoidCallback? onDelete;
   final VoidCallback? onBlock;
   final VoidCallback? onReport;
@@ -92,6 +94,13 @@ class CommentCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (commentModel.user.id.isEmpty) {
+      return NextPageButtonWidget(
+          onTab: () => {
+                if (onNextPage != null) {onNextPage!()}
+              });
+    }
+
     return Container(
       margin: EdgeInsets.all(10.0),
       child: Card(

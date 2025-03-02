@@ -10,7 +10,7 @@ import 'package:whats_this/util/constants.dart';
 
 class QuestionListProvider extends GetxService {
   int currentPage = 1;
-  final pagePerCount = 10;
+  final pagePerCount = 3;
   PocketBase pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
   String questionTable = 'questions';
 

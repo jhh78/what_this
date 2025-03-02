@@ -17,7 +17,7 @@ class QuestionDetailProvider extends GetxService {
 
   RxBool isLoading = false.obs;
   int currentPage = 1;
-  int pagePerCount = 10;
+  int pagePerCount = 3;
   final UserProvider userProvider = Get.put(UserProvider());
   final TextEditingController commentController = TextEditingController();
   final String tableName = 'comment';
@@ -44,7 +44,7 @@ class QuestionDetailProvider extends GetxService {
       // 필터 조건 생성
       String filterCondition = config.blockList.isNotEmpty ? config.blockList.map((id) => 'id != "$id"').join(' && ') : '';
 
-      final resultList = await pb.collection('comment').getList(
+      final response = await pb.collection('comment').getList(
             page: currentPage,
             perPage: pagePerCount,
             sort: '-created',
@@ -52,11 +52,23 @@ class QuestionDetailProvider extends GetxService {
             filter: 'question="${questionModel.value.id}" && $filterCondition',
           );
 
-      commentList.addAll(resultList.items.map((e) => CommentModel.fromRecordModel(e)));
+      commentList.addAll(response.items.map((e) => CommentModel.fromRecordModel(e)).toList());
+      final ids = commentList.map((e) => e.id).toSet();
+      commentList.retainWhere((x) => ids.remove(x.id));
+
+      if (response.totalItems > currentPage * pagePerCount) {
+        commentList.add(CommentModel.emptyModel());
+      }
     } catch (e, stack) {
       log(e.toString());
       log(stack.toString());
     }
+  }
+
+  handleNextPage() {
+    currentPage++;
+    commentList.removeWhere((element) => element.id == QuestionModel.emptyModel().id);
+    fetchCommentData();
   }
 
   Future<void> addComment() async {
