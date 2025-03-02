@@ -73,6 +73,7 @@ class QuestionDetailProvider extends GetxService {
       init();
       fetchCommentData();
     } catch (e, stack) {
+      log(e.toString());
       log(stack.toString());
     }
   }
@@ -141,11 +142,32 @@ class QuestionDetailProvider extends GetxService {
       await pb.collection(tableName).delete(commentID);
       commentList.removeWhere((element) => element.id == commentID);
     } catch (e, stack) {
+      log(e.toString());
       log(stack.toString());
     }
   }
 
-  Future<void> reportItem(String commentID) async {
-    log('reportItem');
+  Future<void> handleReport(CommentModel model, String value) async {
+    try {
+      final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
+      await pb.collection('report').create(body: {
+        'commentID': model.id,
+        'reason': value,
+      });
+
+      commentList.removeWhere((element) => element.id == model.id);
+      _addBlockList(model);
+      commentList.removeWhere((element) => element.id == model.id);
+    } catch (e, stack) {
+      log(stack.toString());
+      log(e.toString());
+    }
+  }
+
+  _addBlockList(CommentModel model) async {
+    final box = await Hive.openBox(SYSTEM_BOX);
+    final SystemConfigModel config = box.get(SYSTEM_CONFIG);
+    config.blockList.add(model.id);
+    box.put(SYSTEM_CONFIG, config);
   }
 }
