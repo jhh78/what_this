@@ -31,13 +31,17 @@ class MyQuestionProvider extends GetxService {
       // 필터 조건 생성
       final response = await pb.collection(questionTable).getList(
             page: currentPage,
-            perPage: 10,
+            perPage: PAGE_PER_COUNT,
             expand: 'user',
             sort: '-created',
             filter: 'user = "${config.userId}"',
           );
 
       questionList.addAll(response.items.map((e) => QuestionModel.fromRecordModel(e)).toList());
+
+      if (response.totalItems > currentPage * PAGE_PER_COUNT) {
+        questionList.add(QuestionModel.emptyModel());
+      }
     } catch (e, stackTrace) {
       log(e.toString());
       log(stackTrace.toString());
@@ -48,6 +52,7 @@ class MyQuestionProvider extends GetxService {
 
   handleNextPage() {
     currentPage++;
+    questionList.removeWhere((element) => element.id == QuestionModel.emptyModel().id);
     fetchQuestionMadel();
   }
 

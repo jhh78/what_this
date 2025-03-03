@@ -34,29 +34,33 @@ class UserInfoScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          GestureDetector(
-              onTap: () => userProvider.pickImage(),
-              child: CircleAvatar(
-                radius: 120,
-                backgroundImage: getFileImageWidget(),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: Icon(
-                    Icons.camera_alt,
-                    color: Colors.white,
-                    size: ICON_SIZE,
+          Expanded(
+            child: GestureDetector(
+                onTap: () => userProvider.pickImage(),
+                child: CircleAvatar(
+                  radius: 120,
+                  backgroundImage: getFileImageWidget(),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: Icon(
+                      Icons.camera_alt,
+                      color: Colors.white,
+                      size: ICON_SIZE,
+                    ),
                   ),
-                ),
-              )),
+                )),
+          ),
           const SizedBox(height: 48),
           Padding(
             padding: const EdgeInsets.all(48.0),
             child: Column(
               children: [
+                renderRowWidget('ユーザー名: ', userProvider.user.value.username),
+                const SizedBox(height: 40),
                 renderRowWidget('レベル: ', getLevel(userProvider.user.value.exp)),
-                const SizedBox(height: 32),
+                const SizedBox(height: 40),
                 renderRowWidget('経験値: ', getNumberFormat(userProvider.user.value.exp)),
-                const SizedBox(height: 32),
+                const SizedBox(height: 40),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size.fromHeight(48), // Set the height

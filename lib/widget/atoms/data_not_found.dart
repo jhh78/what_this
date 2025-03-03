@@ -19,20 +19,13 @@ class DataNotFoundWidget extends StatelessWidget {
             ),
           ),
           color: Colors.white,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "😕",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black, fontSize: 200),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  "Oops!",
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.black),
-                ),
-              ],
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Center(
+              child: Text(
+                "😱 Data Not Found",
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.black),
+              ),
             ),
           ),
         ),

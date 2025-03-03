@@ -28,29 +28,6 @@ class CommentCardWidget extends StatelessWidget {
   final QuestionDetailProvider questionDetailProvider = Get.put(QuestionDetailProvider());
 
   Widget renderIconButton() {
-    return Row(
-      children: [
-        if (onDelete != null)
-          IconButtonWidget(
-            color: Colors.red,
-            onPressed: onDelete!,
-            icon: Icons.delete_forever_outlined,
-          ),
-        if (onBlock != null)
-          IconButtonWidget(
-            color: Colors.red,
-            onPressed: onBlock!,
-            icon: Icons.block,
-          ),
-        if (onReport != null)
-          IconButtonWidget(
-            color: Colors.red,
-            onPressed: onReport!,
-            icon: Icons.notification_important_outlined,
-          ),
-      ],
-    );
-
     if (userProvider.user.value.id == commentModel.user.id) {
       return Row(
         children: [

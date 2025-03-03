@@ -48,7 +48,7 @@ class QuestionDetailProvider extends GetxService {
             perPage: PAGE_PER_COUNT,
             sort: '-created',
             expand: "question,user",
-            filter: 'question="${questionModel.value.id}" && $filterCondition',
+            filter: 'question="${questionModel.value.id}" ${filterCondition.isNotEmpty ? '&& $filterCondition' : ''}',
           );
 
       commentList.addAll(response.items.map((e) => CommentModel.fromRecordModel(e)).toList());
