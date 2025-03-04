@@ -26,7 +26,7 @@ class ContentsCardWidget extends StatelessWidget {
 
   final UserProvider userProvider = Get.put(UserProvider());
 
-  Future<Widget> renderIconButton() async {
+  Widget renderIconButton() {
     if (userProvider.user.value.id == questionModel.user.id) {
       return Row(
         children: [
@@ -72,6 +72,7 @@ class ContentsCardWidget extends StatelessWidget {
     if (questionModel.files.isEmpty) {
       return SizedBox.shrink();
     }
+
     final String imageIrl = "${dotenv.env['POCKET_BASE_FILE_URL']}${questionModel.collectionID}/${questionModel.id}/${questionModel.files}";
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -139,16 +140,7 @@ class ContentsCardWidget extends StatelessWidget {
                     ],
                   ),
                   Spacer(),
-                  FutureBuilder(
-                    future: renderIconButton(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
-                      }
-
-                      return snapshot.data ?? SizedBox.shrink();
-                    },
-                  ),
+                  renderIconButton()
                 ],
               ),
               SizedBox(height: 10),

@@ -15,6 +15,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:whats_this/service/vender/auth.dart';
 import 'firebase_options.dart';
 
+// TODO:: 데이터 낫파운드 공통화 시키기
+// TODO:: 로딩표시 공통화 시키기
+// TODO:: 디플로이 준비
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

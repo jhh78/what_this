@@ -27,8 +27,10 @@ class MyQuestionScreen extends StatelessWidget {
 
   Widget renderQuestionContents() {
     if (myQuestionProvider.isLoading.value) {
-      return Center(
-        child: CircularProgressIndicator(),
+      return Expanded(
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
       );
     }
 
@@ -36,22 +38,24 @@ class MyQuestionScreen extends StatelessWidget {
       return DataNotFoundWidget();
     }
 
-    return ListView.builder(
-      itemCount: myQuestionProvider.questionList.length,
-      itemBuilder: (context, index) {
-        final question = myQuestionProvider.questionList[index];
-        return InkWell(
-          onTap: () {
-            questionDetailProvider.setQuestionModel(question);
-            homeProvider.changeScreenIndex(QUESTION_DETAIL);
-          },
-          child: ContentsCardWidget(
-            questionModel: question,
-            nextPage: () => myQuestionProvider.handleNextPage(),
-            onDelete: () => handleOnDelete(question),
-          ),
-        );
-      },
+    return Expanded(
+      child: ListView.builder(
+        itemCount: myQuestionProvider.questionList.length,
+        itemBuilder: (context, index) {
+          final question = myQuestionProvider.questionList[index];
+          return InkWell(
+            onTap: () {
+              questionDetailProvider.setQuestionModel(question);
+              homeProvider.changeScreenIndex(QUESTION_DETAIL);
+            },
+            child: ContentsCardWidget(
+              questionModel: question,
+              nextPage: () => myQuestionProvider.handleNextPage(),
+              onDelete: () => handleOnDelete(question),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -71,9 +75,7 @@ class MyQuestionScreen extends StatelessWidget {
         body: SafeArea(
           child: Column(
             children: [
-              Expanded(
-                child: Obx(() => renderQuestionContents()),
-              ),
+              Obx(() => renderQuestionContents()),
             ],
           ),
         ),

@@ -15,6 +15,7 @@ class UserProvider extends GetxService {
   Rx<UserModel> user = UserModel.emptyModel().obs;
   Rx<File> tempProfileImage = File('').obs;
   RxBool isLoading = false.obs;
+  RxBool isUpdated = false.obs;
 
   final tableName = 'user';
   final CameraService cameraService = CameraService();
@@ -85,6 +86,7 @@ class UserProvider extends GetxService {
   }
 
   Future<void> updateUser() async {
+    isUpdated.value = true;
     final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
 
     final body = <String, dynamic>{
@@ -97,6 +99,7 @@ class UserProvider extends GetxService {
     );
 
     await pb.collection(tableName).update(user.value.id, body: body, files: multipartImages);
+    isUpdated.value = false;
   }
 
   Future<void> addPoint() async {

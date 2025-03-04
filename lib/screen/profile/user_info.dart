@@ -80,8 +80,8 @@ class UserInfoScreen extends StatelessWidget {
                       margin: EdgeInsets.all(16),
                     );
                   },
-                  child: userProvider.isLoading.value
-                      ? CircularProgressIndicator()
+                  child: userProvider.isUpdated.value
+                      ? LinearProgressIndicator()
                       : Text(
                           '更新',
                           style: Theme.of(context).textTheme.titleMedium,

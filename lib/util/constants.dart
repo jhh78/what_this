@@ -11,4 +11,6 @@ const String REPORT_REASON_KIND = "reportReason";
 
 const int ADD_POINT = 10;
 const int MAX_CONTENTS_LENGTH = 250;
-const int PAGE_PER_COUNT = 2;
+
+// TODO : 화면 깜빡임이 해결되면 페이지당 문의글 수 되돌릴것
+const int PAGE_PER_COUNT = 1;

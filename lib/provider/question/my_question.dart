@@ -15,15 +15,16 @@ class MyQuestionProvider extends GetxService {
   RxList<QuestionModel> questionList = <QuestionModel>[].obs;
   RxBool isLoading = false.obs;
 
-  fetchInitQuestionList() {
-    currentPage = 1;
-    questionList.clear();
-    fetchQuestionMadel();
+  fetchInitQuestionList() async {
+    isLoading.value = true;
+    // currentPage = 1;
+    // questionList.clear();
+    // await fetchQuestionMadel();
+    // isLoading.value = false;
   }
 
   fetchQuestionMadel() async {
     try {
-      isLoading.value = true;
       final PocketBase pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
       final Box box = await Hive.openBox(SYSTEM_BOX);
       final SystemConfigModel config = box.get(SYSTEM_CONFIG);
@@ -45,8 +46,6 @@ class MyQuestionProvider extends GetxService {
     } catch (e, stackTrace) {
       log(e.toString());
       log(stackTrace.toString());
-    } finally {
-      isLoading.value = false;
     }
   }
 
