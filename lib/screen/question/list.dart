@@ -65,10 +65,8 @@ class QuestionListScreen extends StatelessWidget {
 
   Widget renderListContents(BuildContext context) {
     if (questionListProvider.isLoading.value) {
-      return Expanded(
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
+      return Center(
+        child: CircularProgressIndicator(),
       );
     }
 
@@ -76,35 +74,33 @@ class QuestionListScreen extends StatelessWidget {
       return DataNotFoundWidget();
     }
 
-    return Expanded(
-      child: ListView.builder(
-        itemCount: questionListProvider.questionList.length,
-        itemBuilder: (context, index) {
-          final question = questionListProvider.questionList[index];
-          return InkWell(
-            onTap: () {
-              questionDetailProvider.setQuestionModel(question);
-              homeProvider.changeScreenIndex(QUESTION_DETAIL);
-            },
-            child: ContentsCardWidget(
-              questionModel: question,
-              nextPage: () => questionListProvider.handleNextPage(),
-              onBlock: () => handleOnBlock(question: question),
-              onReport: () => handleOnReport(context: context, question: question),
-              onDelete: () => handleOnDelete(question: question),
-            ),
-          );
-        },
-      ),
+    return ListView.builder(
+      itemCount: questionListProvider.questionList.length,
+      itemBuilder: (context, index) {
+        final question = questionListProvider.questionList[index];
+        return InkWell(
+          onTap: () {
+            questionDetailProvider.setQuestionModel(question);
+            homeProvider.changeScreenIndex(QUESTION_DETAIL);
+          },
+          child: ContentsCardWidget(
+            questionModel: question,
+            nextPage: () => questionListProvider.handleNextPage(),
+            onBlock: () => handleOnBlock(question: question),
+            onReport: () => handleOnReport(context: context, question: question),
+            onDelete: () => handleOnDelete(question: question),
+          ),
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Obx(() => renderListContents(context)),
-      ],
+    return SafeArea(
+      child: Scaffold(
+        body: Obx(() => renderListContents(context)),
+      ),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:whats_this/model/question.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/util/util.dart';
+import 'package:whats_this/widget/atoms/date_area.dart';
 import 'package:whats_this/widget/atoms/icon_button.dart';
 import 'package:whats_this/widget/atoms/next_page_button.dart';
 
@@ -148,6 +149,7 @@ class ContentsCardWidget extends StatelessWidget {
                 questionModel.contents,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black),
               ),
+              DateAreaWidget(currentTime: questionModel.created),
               SizedBox(height: 10),
               renderImageArea(),
             ],

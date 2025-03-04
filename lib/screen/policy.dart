@@ -25,15 +25,15 @@ class _PolicyScreenState extends State<PolicyScreen> {
 
   Future<void> _handleSignIn() async {
     try {
-      setState(() {
-        isLoading = true;
-      });
-
       if (Platform.isAndroid) {
         await AuthService.signInWithGoogle();
       } else if (Platform.isIOS) {
         await AuthService.signInWithApple();
       }
+
+      setState(() {
+        isLoading = true;
+      });
 
       await userProvider.createUser();
 
@@ -63,45 +63,47 @@ class _PolicyScreenState extends State<PolicyScreen> {
         ),
         title: const Text('Privacy Policy'),
       ),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Expanded(
-                flex: 9,
-                child: WebViewWidget(
-                  controller: WebViewController()
-                    ..setBackgroundColor(Colors.white)
-                    ..enableZoom(true)
-                    ..setJavaScriptMode(JavaScriptMode.unrestricted)
-                    ..loadRequest(Uri.parse(dotenv.env['PRIVACY_POLICY_URL_JP']!)),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  flex: 9,
+                  child: WebViewWidget(
+                    controller: WebViewController()
+                      ..setBackgroundColor(Colors.white)
+                      ..enableZoom(true)
+                      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                      ..loadRequest(Uri.parse(dotenv.env['PRIVACY_POLICY_URL_JP']!)),
+                  ),
                 ),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    side: BorderSide(color: Colors.grey),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                    backgroundColor: Colors.white),
-                onPressed: _handleSignIn,
-                child: Text(
-                  'Agree and Continue',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: Colors.black87,
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      side: BorderSide(color: Colors.grey),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
                       ),
+                      backgroundColor: Colors.white),
+                  onPressed: _handleSignIn,
+                  child: Text(
+                    'Agree and Continue',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: Colors.black87,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+            if (isLoading)
+              Container(
+                color: Colors.black.withAlpha(100),
+                child: Center(
+                  child: CircularProgressIndicator(),
                 ),
               ),
-            ],
-          ),
-          if (isLoading)
-            Container(
-              color: Colors.black.withAlpha(100),
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

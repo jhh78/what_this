@@ -113,6 +113,7 @@ class QuestionDetailScreen extends StatelessWidget {
                 questionModel: questionDetailProvider.questionModel.value,
               ),
             ),
+            Divider(thickness: 1, color: Colors.grey.shade300),
             Obx(() => renderCommentList()),
           ],
         ),

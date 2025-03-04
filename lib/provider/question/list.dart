@@ -38,7 +38,7 @@ class QuestionListProvider extends GetxService {
     isLoading.value = true;
     currentPage = 1;
     questionList.clear();
-    // await fetchQuestionMadel();
+    await fetchQuestionMadel();
     isLoading.value = false;
   }
 

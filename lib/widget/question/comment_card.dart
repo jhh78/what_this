@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:whats_this/model/comment.dart';
 import 'package:whats_this/provider/question/detail.dart';
 import 'package:whats_this/provider/user.dart';
+import 'package:whats_this/widget/atoms/date_area.dart';
 import 'package:whats_this/widget/atoms/icon_button.dart';
 import 'package:whats_this/widget/atoms/next_page_button.dart';
 
@@ -73,13 +74,14 @@ class CommentCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (commentModel.user.id.isEmpty) {
       return NextPageButtonWidget(
-          onTab: () => {
-                if (onNextPage != null) {onNextPage!()}
-              });
+        onTab: () => {
+          if (onNextPage != null) {onNextPage!()}
+        },
+      );
     }
 
     return Container(
-      margin: EdgeInsets.all(10.0),
+      margin: EdgeInsets.only(top: 5, bottom: 5, left: 30, right: 10),
       child: Card(
         elevation: 5,
         shape: RoundedRectangleBorder(
@@ -116,26 +118,31 @@ class CommentCardWidget extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButtonWidget(
-                    color: Colors.lightBlue,
-                    onPressed: () => questionDetailProvider.thumbUpItem(model: commentModel),
-                    icon: Icons.thumb_up,
-                  ),
-                  Text(
-                    NumberFormat("#,###").format(commentModel.thumb_up),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black),
-                  ),
-                  IconButtonWidget(
-                    color: Colors.red,
-                    onPressed: () => questionDetailProvider.thumbDownItem(model: commentModel),
-                    icon: Icons.thumb_down,
-                  ),
-                  Text(
-                    NumberFormat("#,###").format(commentModel.thumb_down),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black),
-                  ),
+                  DateAreaWidget(currentTime: commentModel.created),
+                  Row(
+                    children: [
+                      IconButtonWidget(
+                        color: Colors.lightBlue,
+                        onPressed: () => questionDetailProvider.thumbUpItem(model: commentModel),
+                        icon: Icons.thumb_up,
+                      ),
+                      Text(
+                        NumberFormat("#,###").format(commentModel.thumb_up),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black),
+                      ),
+                      IconButtonWidget(
+                        color: Colors.red,
+                        onPressed: () => questionDetailProvider.thumbDownItem(model: commentModel),
+                        icon: Icons.thumb_down,
+                      ),
+                      Text(
+                        NumberFormat("#,###").format(commentModel.thumb_down),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ],

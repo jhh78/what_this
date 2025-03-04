@@ -17,10 +17,10 @@ class MyQuestionProvider extends GetxService {
 
   fetchInitQuestionList() async {
     isLoading.value = true;
-    // currentPage = 1;
-    // questionList.clear();
-    // await fetchQuestionMadel();
-    // isLoading.value = false;
+    currentPage = 1;
+    questionList.clear();
+    await fetchQuestionMadel();
+    isLoading.value = false;
   }
 
   fetchQuestionMadel() async {
