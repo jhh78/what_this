@@ -4,9 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hive/hive.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:whats_this/model/system.dart';
+import 'package:whats_this/service/vender/hive.dart';
 import 'package:whats_this/util/constants.dart';
 
 class AuthService {
@@ -108,15 +107,10 @@ class AuthService {
   }
 
   static Future<void> checkInitialized() async {
-    Box box = await Hive.openBox(SYSTEM_BOX);
-    final SystemConfigModel config = box.get(SYSTEM_CONFIG, defaultValue: SystemConfigModel());
-
-    if (!config.isInit) {
-      box.put(SYSTEM_CONFIG, config);
+    final isInie = await HiveService.getBoxValue(IS_FIRST_INSTALL);
+    if (isInie == null) {
       await signOut();
     }
-
-    config.showData();
   }
 
   static Future<User?> checkUserStatus() async {

@@ -8,15 +8,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:upgrader/upgrader.dart';
-import 'package:whats_this/model/system.dart';
 import 'package:whats_this/screen/home/home.dart';
 import 'package:whats_this/screen/signin/sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:whats_this/service/vender/auth.dart';
 import 'firebase_options.dart';
+import 'service/vender/hive.dart';
 
 // TODO:: 디플로이 준비
-// TODO:: 좋아요 싫어요의 제어
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -35,14 +34,25 @@ void main() async {
   }
 
   await Hive.initFlutter();
-  Hive.registerAdapter(SystemConfigModelAdapter());
+  await HiveService.init();
   await AuthService.checkInitialized();
 
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void dispose() {
+    HiveService.closeBox();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
