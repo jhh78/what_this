@@ -3,12 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:pocketbase/pocketbase.dart';
-import 'package:whats_this/model/system.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/service/vender/camera.dart';
+import 'package:whats_this/service/vender/hive.dart';
 import 'package:whats_this/util/constants.dart';
 
 class QuestionAddProvider extends GetxService {
@@ -39,8 +38,7 @@ class QuestionAddProvider extends GetxService {
 
   Future<void> addQuestion() async {
     final String questionText = textController.text;
-    Box box = await Hive.openBox(SYSTEM_BOX);
-    final SystemConfigModel config = box.get(SYSTEM_CONFIG);
+    final userId = HiveService.getBoxValue(USER_ID);
 
     final pbUrl = dotenv.env['POCKET_BASE_URL'].toString();
     final pb = PocketBase(pbUrl);
@@ -49,12 +47,12 @@ class QuestionAddProvider extends GetxService {
     final List<http.MultipartFile> multipartImages = await cameraService.convertImageToMultipartFile(
       key: 'files',
       image: image.value,
-      size: 800,
+      size: 600,
     );
 
     await pb.collection('questions').create(
       body: {
-        "user": config.userId,
+        "user": userId,
         "contents": questionText,
       },
       files: multipartImages,

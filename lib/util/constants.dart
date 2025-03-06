@@ -1,7 +1,8 @@
 const String SYSTEM_CONFIG = 'system_config';
 const String IS_FIRST_INSTALL = 'isFirstInstall';
 const String USER_ID = 'userId';
-const String BLOCK_LIST = 'block_list';
+const String BLOCK_LIST_QUESTION = 'block_list_question';
+const String BLOCK_LIST_COMMENT = 'block_list_comment';
 
 const String QUESTION_LIST = 'home';
 const String USER_INFO = 'user_info';

@@ -4,11 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:hive/hive.dart';
 import 'package:pocketbase/pocketbase.dart';
-import 'package:whats_this/model/system.dart';
 import 'package:whats_this/model/user.dart';
 import 'package:whats_this/service/vender/camera.dart';
+import 'package:whats_this/service/vender/hive.dart';
 import 'package:whats_this/util/constants.dart';
 
 class UserProvider extends GetxService {
@@ -37,12 +36,8 @@ class UserProvider extends GetxService {
   }
 
   Future<void> fetchUserData() async {
-    Box box = await Hive.openBox(SYSTEM_BOX);
-    final SystemConfigModel config = box.get(SYSTEM_CONFIG);
-
-    final userID = config.userId;
-
-    if (userID.isEmpty) {
+    final userID = await HiveService.getBoxValue(USER_ID);
+    if (userID == null) {
       return;
     }
 
@@ -78,11 +73,8 @@ class UserProvider extends GetxService {
     final record = await pb.collection(tableName).create(body: body);
     user.value = UserModel.fromRecordModel(record);
 
-    Box box = await Hive.openBox(SYSTEM_BOX);
-    SystemConfigModel config = box.get(SYSTEM_CONFIG);
-    config.isInit = true;
-    config.userId = record.id;
-    box.put(SYSTEM_CONFIG, config);
+    await HiveService.putBoxValue(IS_FIRST_INSTALL, true);
+    await HiveService.putBoxValue(USER_ID, user.value.id);
   }
 
   Future<void> updateUser() async {

@@ -12,6 +12,7 @@ class HiveService {
     if (_box == null) {
       throw HiveError('Box has not been initialized.');
     }
+
     return _box!.get(name);
   }
 

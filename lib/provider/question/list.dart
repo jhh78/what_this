@@ -1,11 +1,11 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:whats_this/model/question.dart';
-import 'package:whats_this/model/system.dart';
+import 'package:whats_this/service/vender/hive.dart';
 import 'package:whats_this/util/constants.dart';
 
 class QuestionListProvider extends GetxService {
@@ -43,33 +43,28 @@ class QuestionListProvider extends GetxService {
   }
 
   fetchQuestionMadel() async {
-    try {
-      final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
+    final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
 
-      // 제외할 ID 목록
-      final Box box = await Hive.openBox(SYSTEM_BOX);
-      final SystemConfigModel config = box.get(SYSTEM_CONFIG);
+    // 필터 조건 생성
+    final String? blockList = HiveService.getBoxValue(BLOCK_LIST_QUESTION);
+    final List<dynamic> parseBlockList = blockList != null ? jsonDecode(blockList) : [];
 
-      // 필터 조건 생성
-      String filterCondition = config.blockList.isNotEmpty ? config.blockList.map((id) => 'id != "$id"').join(' && ') : '';
+    String filterCondition = parseBlockList.isNotEmpty ? parseBlockList.map((id) => 'id != "$id"').join(' && ') : '';
 
-      final response = await pb.collection(questionTable).getList(
-            page: currentPage,
-            perPage: PAGE_PER_COUNT,
-            expand: 'user',
-            sort: '-created',
-            filter: filterCondition,
-          );
+    final response = await pb.collection(questionTable).getList(
+          page: currentPage,
+          perPage: PAGE_PER_COUNT,
+          expand: 'user',
+          sort: '-created',
+          filter: filterCondition,
+        );
 
-      questionList.addAll(response.items.map((e) => QuestionModel.fromRecordModel(e)).toList());
-      final ids = questionList.map((e) => e.id).toSet();
-      questionList.retainWhere((x) => ids.remove(x.id));
+    questionList.addAll(response.items.map((e) => QuestionModel.fromRecordModel(e)).toList());
+    final ids = questionList.map((e) => e.id).toSet();
+    questionList.retainWhere((x) => ids.remove(x.id));
 
-      if (response.totalItems > currentPage * PAGE_PER_COUNT) {
-        questionList.add(QuestionModel.emptyModel());
-      }
-    } catch (e, stackTrace) {
-      log("fetchQuestionMadel error: $stackTrace");
+    if (response.totalItems > currentPage * PAGE_PER_COUNT) {
+      questionList.add(QuestionModel.emptyModel());
     }
   }
 
@@ -112,9 +107,9 @@ class QuestionListProvider extends GetxService {
   }
 
   _addBlockList(QuestionModel model) async {
-    final box = await Hive.openBox(SYSTEM_BOX);
-    final SystemConfigModel config = box.get(SYSTEM_CONFIG);
-    config.blockList.add(model.id);
-    box.put(SYSTEM_CONFIG, config);
+    final String? blockList = HiveService.getBoxValue(BLOCK_LIST_QUESTION);
+    final List<dynamic> parseBlockList = blockList != null ? jsonDecode(blockList) : [];
+    parseBlockList.add(model.id);
+    HiveService.putBoxValue(BLOCK_LIST_QUESTION, jsonEncode(parseBlockList));
   }
 }
