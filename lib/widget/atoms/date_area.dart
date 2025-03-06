@@ -8,11 +8,13 @@ class DateAreaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DateTime utcDateTime = DateTime.parse(currentTime);
+    DateTime localDateTime = utcDateTime.toLocal();
     return Column(
       children: [
         SizedBox(height: 5),
         Text(
-          DateFormat('yyyy/MM/dd HH:mm').format(DateTime.parse(currentTime)),
+          DateFormat('yyyy/MM/dd HH:mm').format(localDateTime),
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black),
         ),
       ],
