@@ -1,8 +1,13 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/service/vender/camera.dart';
+import 'package:whats_this/service/vender/hive.dart';
+import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/util/styles.dart';
 import 'package:whats_this/util/util.dart';
 import 'package:whats_this/widget/atoms/action_button.dart';
@@ -17,6 +22,12 @@ class UserInfoScreen extends StatelessWidget {
       return FileImage(userProvider.tempProfileImage.value);
     } else if (userProvider.user.value.profile.isEmpty) {
       return AssetImage('assets/avatar/default.png');
+    }
+
+    final dynamic imagePath = HiveService.getBoxValue(USER_PROFILE_IMAGE);
+    log('User Profile ImagePath: $imagePath');
+    if (imagePath != null && imagePath is String && imagePath.isNotEmpty) {
+      return FileImage(File(imagePath));
     }
 
     final fileUrl =
@@ -37,19 +48,20 @@ class UserInfoScreen extends StatelessWidget {
         children: [
           Expanded(
             child: GestureDetector(
-                onTap: () => userProvider.pickImage(),
-                child: CircleAvatar(
-                  radius: 120,
-                  backgroundImage: getFileImageWidget(),
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: Icon(
-                      Icons.camera_alt,
-                      color: Colors.white,
-                      size: ICON_SIZE,
-                    ),
+              onTap: () => userProvider.pickImage(),
+              child: CircleAvatar(
+                radius: 120,
+                backgroundImage: getFileImageWidget(),
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Icon(
+                    Icons.camera_alt,
+                    color: Colors.white,
+                    size: ICON_SIZE,
                   ),
-                )),
+                ),
+              ),
+            ),
           ),
           const SizedBox(height: 48),
           Padding(

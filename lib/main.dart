@@ -17,6 +17,7 @@ import 'service/vender/hive.dart';
 
 // TODO:: 사진업로드가 완료되면 로컬에 저장하고 불러오도록 하기
 // TODO:: 댓글, 질문 삭제, 블럭시 에니메이션 추가
+// TODO:: 상세 페이지에서 돌아올때 스크롤 위치 유지
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
