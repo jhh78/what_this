@@ -23,7 +23,7 @@ class QuestionService {
     final List<http.MultipartFile> multipartImages = await cameraService.convertImageToMultipartFile(
       key: 'files',
       image: image,
-      size: 600,
+      size: 1024,
     );
 
     await pb.collection('questions').create(

@@ -38,19 +38,19 @@ class HomeScreen extends StatelessWidget {
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
-                label: '情報',
+                label: 'Info',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.list_alt_rounded),
-                label: 'リスト',
+                label: 'List',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.question_answer_outlined),
-                label: 'マイリスト',
+                label: 'My List',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.add_comment_outlined),
-                label: '質問する',
+                label: 'Add',
               ),
             ],
           ),

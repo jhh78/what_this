@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -89,15 +89,16 @@ class QuestionDetailProvider extends GetxService {
   }
 
   Future<void> thumbUpItem({required CommentModel model}) async {
-    final thumbUp = HiveService.getBoxValue(THUMB_UP_COMMENT);
+    final thumbUp = HiveService.getBoxValue(THUMB_CHOICE);
     final List<dynamic> parseThumbUp = thumbUp != null ? jsonDecode(thumbUp) : [];
 
     if (parseThumbUp.contains(model.id)) {
+      _showDuplicateThumbAction();
       return;
     }
 
     parseThumbUp.add(model.id);
-    HiveService.putBoxValue(THUMB_UP_COMMENT, jsonEncode(parseThumbUp));
+    HiveService.putBoxValue(THUMB_CHOICE, jsonEncode(parseThumbUp));
 
     final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
     final body = <String, dynamic>{
@@ -115,15 +116,16 @@ class QuestionDetailProvider extends GetxService {
   }
 
   Future<void> thumbDownItem({required CommentModel model}) async {
-    final thumbDown = HiveService.getBoxValue(THUMB_DOWN_COMMENT);
+    final thumbDown = HiveService.getBoxValue(THUMB_CHOICE);
     final List<dynamic> parseThumbDown = thumbDown != null ? jsonDecode(thumbDown) : [];
 
     if (parseThumbDown.contains(model.id)) {
+      _showDuplicateThumbAction();
       return;
     }
 
     parseThumbDown.add(model.id);
-    HiveService.putBoxValue(THUMB_DOWN_COMMENT, jsonEncode(parseThumbDown));
+    HiveService.putBoxValue(THUMB_CHOICE, jsonEncode(parseThumbDown));
 
     final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
     final body = <String, dynamic>{
@@ -164,5 +166,14 @@ class QuestionDetailProvider extends GetxService {
     final List<dynamic> parseBlockList = blockList != null ? jsonDecode(blockList) : [];
     parseBlockList.add(model.id);
     HiveService.putBoxValue(BLOCK_LIST_QUESTION, jsonEncode(parseBlockList));
+  }
+
+  _showDuplicateThumbAction() {
+    Get.dialog(
+      AlertDialog(
+        title: Text('すでに選択済みです。'),
+        content: Text('一度選択した項目は再度選択できません。'),
+      ),
+    );
   }
 }

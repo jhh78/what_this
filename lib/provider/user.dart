@@ -1,9 +1,10 @@
+import 'dart:developer';
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:whats_this/model/user.dart';
 import 'package:whats_this/service/vender/camera.dart';
@@ -91,6 +92,7 @@ class UserProvider extends GetxService {
     );
 
     await pb.collection(tableName).update(user.value.id, body: body, files: multipartImages);
+    await saveImageLocally(tempProfileImage.value); // 이미지 로컬 저장
     isUpdated.value = false;
   }
 
@@ -103,5 +105,28 @@ class UserProvider extends GetxService {
     };
 
     await pb.collection(tableName).update(user.value.id, body: body);
+  }
+
+  Future<void> saveImageLocally(File image) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final path = directory.path;
+      final fileName = 'profile_image.png';
+
+      if (!await image.exists()) {
+        log('Image file does not exist');
+        return;
+      }
+
+      final localImage = File('$path/$fileName');
+
+      // 이미지 파일을 로컬에 저장
+      await localImage.writeAsBytes(await image.readAsBytes());
+      await HiveService.putBoxValue(USER_PROFILE_IMAGE, '$path/$fileName');
+
+      log('Image saved to imagePath : $path/$fileName');
+    } catch (e) {
+      log('Error saving image: $e');
+    }
   }
 }
