@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +14,12 @@ import 'firebase_options.dart';
 import 'service/vender/hive.dart';
 
 // TODO:: 디플로이 준비
+
+// TODO:: 사진업로드가 완료되면 로컬에 저장하고 불러오도록 하기
+// TODO:: 유저 데이터 패치할때 사진 데이터는 생략하여 트래픽줄이기
+
+// TODO:: 댓글, 질문 삭제, 블럭시 에니메이션 추가
+// TODO:: 글 작성시 엔트리 포인트 조절하기
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -69,7 +73,6 @@ class _MyAppState extends State<MyApp> {
           );
         } else {
           final User? currentUser = snapshot.data;
-          log("Main Screen >>>>>> ${currentUser.toString()}");
 
           return GetMaterialApp(
             themeMode: ThemeMode.dark,

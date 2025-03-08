@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:whats_this/provider/question/detail.dart';
 import 'package:whats_this/provider/question/my_question.dart';
-import 'package:whats_this/provider/question/add.dart';
 import 'package:whats_this/provider/question/list.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/util/constants.dart';
@@ -13,7 +12,6 @@ class HomeProvider extends GetxService {
 
   final QuestionListProvider questionListProvider = Get.put(QuestionListProvider());
   final MyQuestionProvider myQuestionProvider = Get.put(MyQuestionProvider());
-  final QuestionAddProvider questionAddProvider = Get.put(QuestionAddProvider());
   final UserProvider userProvider = Get.put(UserProvider());
   final QuestionDetailProvider questionDetailProvider = Get.put(QuestionDetailProvider());
 
@@ -41,9 +39,7 @@ class HomeProvider extends GetxService {
       currentIndex.value = 2;
       questionDetailProvider.init();
     } else if (screen == ADD_QUESTION) {
-      currentIndex.value = 4;
       menuIndex.value = 3;
-      questionAddProvider.init();
     }
   }
 }

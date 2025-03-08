@@ -1,42 +1,18 @@
-import 'dart:io';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:pocketbase/pocketbase.dart';
-import 'package:whats_this/provider/user.dart';
-import 'package:whats_this/service/vender/camera.dart';
 import 'package:whats_this/service/vender/hive.dart';
+import 'package:http/http.dart' as http;
 import 'package:whats_this/util/constants.dart';
 
-class QuestionAddProvider extends GetxService {
-  Rx<File> image = File("").obs;
+import '../provider/home.dart';
+import '../provider/user.dart';
 
-  final TextEditingController textController = TextEditingController();
-  final CameraService cameraService = CameraService();
+class QuestionService {
+  final HomeProvider homeProvider = Get.put(HomeProvider());
   final UserProvider userProvider = Get.put(UserProvider());
 
-  void init() {
-    clearImage();
-    textController.clear();
-  }
-
-  Future<void> pickImage() async {
-    final File? image = await cameraService.pickImageFromCamera();
-
-    if (image == null) {
-      return;
-    }
-
-    this.image.value = image;
-  }
-
-  void clearImage() {
-    image.value = File("");
-  }
-
-  Future<void> addQuestion() async {
+  Future<void> addQuestion({required textController, required cameraService, required image}) async {
     final String questionText = textController.text;
     final userId = HiveService.getBoxValue(USER_ID);
 
@@ -46,7 +22,7 @@ class QuestionAddProvider extends GetxService {
     // 이미지 업로드
     final List<http.MultipartFile> multipartImages = await cameraService.convertImageToMultipartFile(
       key: 'files',
-      image: image.value,
+      image: image,
       size: 600,
     );
 
@@ -58,6 +34,7 @@ class QuestionAddProvider extends GetxService {
       files: multipartImages,
     );
 
-    init();
+    await userProvider.addPoint();
+    homeProvider.init();
   }
 }

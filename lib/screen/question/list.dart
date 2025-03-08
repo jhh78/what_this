@@ -18,12 +18,18 @@ class QuestionListScreen extends StatelessWidget {
   final FormProvider formProvider = Get.put(FormProvider());
   final QuestionDetailProvider questionDetailProvider = Get.put(QuestionDetailProvider());
 
-  void handleOnBlock({required QuestionModel question}) {
+  void handleOnBlock({required BuildContext context, required QuestionModel question}) {
+    FocusScope.of(context).unfocus(); // 포커스 해제
     showConfirmDialog(
       title: 'ブロック',
       middleText: "選択したコンテンツをブロックしますか？",
       onConfirm: () {
         questionListProvider.handleBlock(question);
+        FocusScope.of(context).unfocus(); // 포커스 해제
+        Get.back();
+      },
+      onClose: () {
+        FocusScope.of(context).unfocus(); // 포커스 해제
         Get.back();
       },
     );
@@ -38,7 +44,7 @@ class QuestionListScreen extends StatelessWidget {
         child: ReasonFormWidget(),
       ),
       onClose: () {
-        FocusScope.of(context).unfocus();
+        FocusScope.of(context).unfocus(); // 포커스 해제
         Get.back();
       },
       onConfirm: () {
@@ -47,17 +53,23 @@ class QuestionListScreen extends StatelessWidget {
         }
 
         questionListProvider.handleReport(question, formProvider.getData(REPORT_REASON_KIND));
+        FocusScope.of(context).unfocus(); // 포커스 해제
         Get.back();
       },
     );
   }
 
-  void handleOnDelete({required QuestionModel question}) {
+  void handleOnDelete({required BuildContext context, required QuestionModel question}) {
     showConfirmDialog(
       title: '削除',
       middleText: "選択したコンテンツを削除しますか？",
       onConfirm: () {
         questionListProvider.handleDelete(question);
+        FocusScope.of(context).unfocus(); // 포커스 해제
+        Get.back();
+      },
+      onClose: () {
+        FocusScope.of(context).unfocus(); // 포커스 해제
         Get.back();
       },
     );
@@ -86,9 +98,9 @@ class QuestionListScreen extends StatelessWidget {
           child: ContentsCardWidget(
             questionModel: question,
             nextPage: () => questionListProvider.handleNextPage(),
-            onBlock: () => handleOnBlock(question: question),
+            onBlock: () => handleOnBlock(context: context, question: question),
             onReport: () => handleOnReport(context: context, question: question),
-            onDelete: () => handleOnDelete(question: question),
+            onDelete: () => handleOnDelete(context: context, question: question),
           ),
         );
       },

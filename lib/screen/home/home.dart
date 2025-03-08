@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:whats_this/screen/question/add.dart';
 import 'package:whats_this/screen/question/detail.dart';
 import 'package:whats_this/screen/my_question/my_question.dart';
 import 'package:whats_this/screen/question/list.dart';
@@ -24,7 +23,6 @@ class HomeScreen extends StatelessWidget {
                   QuestionListScreen(),
                   QuestionDetailScreen(),
                   MyQuestionScreen(),
-                  QuestionAddScreen(),
                 ],
               )),
         ),
@@ -34,7 +32,9 @@ class HomeScreen extends StatelessWidget {
             selectedItemColor: Colors.amber,
             unselectedItemColor: Colors.grey,
             currentIndex: homeService.getMenuIndex(),
-            onTap: homeService.onTabScreen,
+            onTap: (index) {
+              homeService.onTabScreen(index);
+            },
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),

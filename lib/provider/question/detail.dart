@@ -89,7 +89,16 @@ class QuestionDetailProvider extends GetxService {
   }
 
   Future<void> thumbUpItem({required CommentModel model}) async {
-    // TODO :::댓글에대한 평가는 1 유저당 1회만 가능하도록 처리
+    final thumbUp = HiveService.getBoxValue(THUMB_UP_COMMENT);
+    final List<dynamic> parseThumbUp = thumbUp != null ? jsonDecode(thumbUp) : [];
+
+    if (parseThumbUp.contains(model.id)) {
+      return;
+    }
+
+    parseThumbUp.add(model.id);
+    HiveService.putBoxValue(THUMB_UP_COMMENT, jsonEncode(parseThumbUp));
+
     final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
     final body = <String, dynamic>{
       "thumb_up": model.thumb_up + 1,
@@ -106,7 +115,16 @@ class QuestionDetailProvider extends GetxService {
   }
 
   Future<void> thumbDownItem({required CommentModel model}) async {
-    // TODO :::댓글에대한 평가는 1 유저당 1회만 가능하도록 처리
+    final thumbDown = HiveService.getBoxValue(THUMB_DOWN_COMMENT);
+    final List<dynamic> parseThumbDown = thumbDown != null ? jsonDecode(thumbDown) : [];
+
+    if (parseThumbDown.contains(model.id)) {
+      return;
+    }
+
+    parseThumbDown.add(model.id);
+    HiveService.putBoxValue(THUMB_DOWN_COMMENT, jsonEncode(parseThumbDown));
+
     final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
     final body = <String, dynamic>{
       "thumb_down": model.thumb_down + 1,
