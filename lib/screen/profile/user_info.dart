@@ -5,6 +5,7 @@ import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/service/vender/camera.dart';
 import 'package:whats_this/util/styles.dart';
 import 'package:whats_this/util/util.dart';
+import 'package:whats_this/widget/atoms/action_button.dart';
 
 class UserInfoScreen extends StatelessWidget {
   UserInfoScreen({super.key});
@@ -61,31 +62,13 @@ class UserInfoScreen extends StatelessWidget {
                 const SizedBox(height: 40),
                 renderRowWidget('経験値: ', getNumberFormat(userProvider.user.value.exp)),
                 const SizedBox(height: 40),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size.fromHeight(48), // Set the height
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                    ),
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  onPressed: () async {
-                    await userProvider.updateUser();
-                    Get.snackbar(
-                      '処理完了',
-                      'ユーザー情報が更新されました。',
-                      snackPosition: SnackPosition.BOTTOM,
-                      margin: EdgeInsets.all(16),
-                    );
-                  },
-                  child: userProvider.isUpdated.value
-                      ? LinearProgressIndicator()
-                      : Text(
-                          '更新',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
+                ActionButtonWidget(
+                  noticeTitle: '処理完了',
+                  noticeContent: 'ユーザー情報が更新されました。',
+                  buttonText: '更新',
+                  showNotice: true,
+                  isUpdated: userProvider.isUpdated.value,
+                  onPressed: userProvider.updateUser,
                 ),
               ],
             ),

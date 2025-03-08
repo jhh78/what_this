@@ -7,6 +7,7 @@ import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/service/question.dart';
 import 'package:whats_this/service/vender/camera.dart';
 import 'package:whats_this/util/styles.dart';
+import 'package:whats_this/widget/atoms/action_button.dart';
 
 class QuestionAddScreen extends StatefulWidget {
   const QuestionAddScreen({super.key});
@@ -25,6 +26,7 @@ class _QuestionAddScreenState extends State<QuestionAddScreen> {
   final FocusNode textFocusNode = FocusNode();
   final ScrollController scrollController = ScrollController();
   File _image = File("");
+  bool isUpdated = false;
 
   @override
   void initState() {
@@ -55,6 +57,10 @@ class _QuestionAddScreenState extends State<QuestionAddScreen> {
       Get.snackbar('質問未入力', '質問を入力してください。');
       return;
     }
+
+    setState(() {
+      isUpdated = true;
+    });
 
     await questionService.addQuestion(
       textController: textController,
@@ -183,27 +189,14 @@ class _QuestionAddScreenState extends State<QuestionAddScreen> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: BottomAppBar(
-          child: ElevatedButton(
-            onPressed: handleRegister,
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.grey[850], // 다크 테마에 맞게 배경색 설정
-              backgroundColor: Colors.white, // 텍스트 색상 설정
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero, // 사각형 모양 설정
-              ),
-              padding: EdgeInsets.symmetric(vertical: 15), // 버튼 높이 설정
-            ),
-            child: Text(
-              '質問する',
-              style: TextStyle(fontSize: 18),
-            ),
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-        ),
-      ),
+          child: ActionButtonWidget(
+            buttonText: '質問する',
+            isUpdated: isUpdated,
+            onPressed: handleRegister,
+          )),
     );
   }
 }
