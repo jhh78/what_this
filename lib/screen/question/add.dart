@@ -120,12 +120,12 @@ class _QuestionAddScreenState extends State<QuestionAddScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('質問する'),
-      ),
-      body: SafeArea(
-        child: LayoutBuilder(
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('質問する'),
+        ),
+        body: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
               controller: scrollController,
@@ -149,7 +149,16 @@ class _QuestionAddScreenState extends State<QuestionAddScreen> {
                             },
                             icon: Icon(
                               Icons.camera,
-                              size: ICON_SIZE,
+                              size: ICON_SIZE_BIG,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              handleRegister();
+                            },
+                            icon: Icon(
+                              Icons.add_circle_outline,
+                              size: ICON_SIZE_BIG,
                             ),
                           ),
                         ],
@@ -188,15 +197,6 @@ class _QuestionAddScreenState extends State<QuestionAddScreen> {
           },
         ),
       ),
-      bottomNavigationBar: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: ActionButtonWidget(
-            buttonText: '質問する',
-            isUpdated: isUpdated,
-            onPressed: handleRegister,
-          )),
     );
   }
 }

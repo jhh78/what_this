@@ -74,6 +74,7 @@ class _MyAppState extends State<MyApp> {
 
           return GetMaterialApp(
             themeMode: ThemeMode.dark,
+            debugShowCheckedModeBanner: false,
             theme: ThemeData(
               useMaterial3: true,
             ),

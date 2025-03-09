@@ -18,21 +18,26 @@ class UserInfoScreen extends StatelessWidget {
   final CameraService cameraService = CameraService();
 
   ImageProvider<Object> getFileImageWidget() {
-    if (userProvider.tempProfileImage.value.path.isNotEmpty) {
-      return FileImage(userProvider.tempProfileImage.value);
-    } else if (userProvider.user.value.profile.isEmpty) {
+    try {
+      if (userProvider.tempProfileImage.value.path.isNotEmpty) {
+        return FileImage(userProvider.tempProfileImage.value);
+      } else if (userProvider.user.value.profile.isEmpty) {
+        return AssetImage('assets/avatar/default.png');
+      }
+
+      final dynamic imagePath = HiveService.getBoxValue(USER_PROFILE_IMAGE);
+      log('User Profile ImagePath: $imagePath');
+      if (imagePath != null && imagePath is String && imagePath.isNotEmpty) {
+        return FileImage(File(imagePath));
+      }
+
+      final fileUrl =
+          "${dotenv.env['POCKET_BASE_FILE_URL']}${userProvider.user.value.collectionId}/${userProvider.user.value.id}/${userProvider.user.value.profile}";
+      return NetworkImage(fileUrl);
+    } catch (e, stackTrace) {
+      log(e.toString(), stackTrace: stackTrace);
       return AssetImage('assets/avatar/default.png');
     }
-
-    final dynamic imagePath = HiveService.getBoxValue(USER_PROFILE_IMAGE);
-    log('User Profile ImagePath: $imagePath');
-    if (imagePath != null && imagePath is String && imagePath.isNotEmpty) {
-      return FileImage(File(imagePath));
-    }
-
-    final fileUrl =
-        "${dotenv.env['POCKET_BASE_FILE_URL']}${userProvider.user.value.collectionId}/${userProvider.user.value.id}/${userProvider.user.value.profile}";
-    return NetworkImage(fileUrl);
   }
 
   Widget renderUserInfoContents(BuildContext context) {
@@ -50,14 +55,14 @@ class UserInfoScreen extends StatelessWidget {
             child: GestureDetector(
               onTap: () => userProvider.pickImage(),
               child: CircleAvatar(
-                radius: 120,
                 backgroundImage: getFileImageWidget(),
+                radius: 120,
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: Icon(
                     Icons.camera_alt,
                     color: Colors.white,
-                    size: ICON_SIZE,
+                    size: ICON_SIZE_BIG,
                   ),
                 ),
               ),
