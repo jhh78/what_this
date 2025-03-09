@@ -94,6 +94,7 @@ class QuestionDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text("質問詳細"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {

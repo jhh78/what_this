@@ -25,10 +25,13 @@ class HomeService {
     }
     if (value == 0) {
       homeProvider.changeScreenIndex(USER_INFO);
+      homeProvider.fetchInitData(USER_INFO);
     } else if (value == 1) {
       homeProvider.changeScreenIndex(QUESTION_LIST);
+      homeProvider.fetchInitData(QUESTION_LIST);
     } else if (value == 2) {
       homeProvider.changeScreenIndex(MY_QUESTION);
+      homeProvider.fetchInitData(MY_QUESTION);
     } else if (value == 3) {
       Get.to(() => QuestionAddScreen(), transition: Transition.rightToLeft);
     }

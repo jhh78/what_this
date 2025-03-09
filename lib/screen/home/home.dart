@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/screen/question/detail.dart';
 import 'package:whats_this/screen/my_question/my_question.dart';
 import 'package:whats_this/screen/question/list.dart';
@@ -9,6 +10,7 @@ import 'package:whats_this/service/home.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
   final HomeService homeService = HomeService();
+  final HomeProvider homeProvider = Get.put(HomeProvider());
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +34,7 @@ class HomeScreen extends StatelessWidget {
             selectedItemColor: Colors.amber,
             unselectedItemColor: Colors.grey,
             currentIndex: homeService.getMenuIndex(),
-            onTap: (index) {
-              homeService.onTabScreen(index);
-            },
+            onTap: homeService.onTabScreen,
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),

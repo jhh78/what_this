@@ -16,7 +16,6 @@ import 'service/vender/hive.dart';
 // TODO:: 디플로이 준비
 
 // TODO:: 댓글, 질문 삭제, 블럭시 에니메이션 추가
-// TODO:: 상세 페이지에서 돌아올때 스크롤 위치 유지
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

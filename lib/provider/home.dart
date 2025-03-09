@@ -24,22 +24,29 @@ class HomeProvider extends GetxService {
     if (screen == USER_INFO) {
       currentIndex.value = 0;
       menuIndex.value = 0;
-      userProvider.fetchUserData();
     } else if (screen == QUESTION_LIST) {
       entryPoint = QUESTION_LIST;
       currentIndex.value = 1;
       menuIndex.value = 1;
-      questionListProvider.fetchInitQuestionList();
     } else if (screen == MY_QUESTION) {
       entryPoint = MY_QUESTION;
       currentIndex.value = 3;
       menuIndex.value = 2;
-      myQuestionProvider.fetchInitQuestionList();
     } else if (screen == QUESTION_DETAIL) {
       currentIndex.value = 2;
       questionDetailProvider.init();
     } else if (screen == ADD_QUESTION) {
       menuIndex.value = 3;
+    }
+  }
+
+  void fetchInitData(String screen) async {
+    if (screen == QUESTION_LIST) {
+      await questionListProvider.fetchInitQuestionList();
+    } else if (screen == MY_QUESTION) {
+      await myQuestionProvider.fetchInitQuestionList();
+    } else if (screen == USER_INFO) {
+      await userProvider.fetchUserData();
     }
   }
 }
