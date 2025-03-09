@@ -7,7 +7,6 @@ import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/service/question.dart';
 import 'package:whats_this/service/vender/camera.dart';
 import 'package:whats_this/util/styles.dart';
-import 'package:whats_this/widget/atoms/action_button.dart';
 
 class QuestionAddScreen extends StatefulWidget {
   const QuestionAddScreen({super.key});

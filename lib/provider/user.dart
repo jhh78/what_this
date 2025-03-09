@@ -51,7 +51,7 @@ class UserProvider extends GetxService {
   }
 
   Future<void> createUser() async {
-    // 회원등록
+    // 회원조회
     final firebaseUser = FirebaseAuth.instance.currentUser;
 
     if (firebaseUser == null) {
@@ -60,19 +60,28 @@ class UserProvider extends GetxService {
 
     final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
 
-    final passwd = firebaseUser.metadata.hashCode.toString();
-    final key = firebaseUser.uid;
-    final emailVisibility = firebaseUser.emailVerified;
+    final auth = await pb.collection(tableName).getList(
+          sort: '-created',
+          filter: 'key="${firebaseUser.uid}"',
+        );
 
-    final body = <String, dynamic>{
-      "emailVisibility": emailVisibility,
-      "password": passwd,
-      "passwordConfirm": passwd,
-      "key": key,
-    };
+    if (auth.items.isNotEmpty) {
+      user.value = UserModel.fromRecordModel(auth.items.first);
+    } else {
+      final passwd = firebaseUser.metadata.hashCode.toString();
+      final key = firebaseUser.uid;
+      final emailVisibility = firebaseUser.emailVerified;
 
-    final record = await pb.collection(tableName).create(body: body);
-    user.value = UserModel.fromRecordModel(record);
+      final body = <String, dynamic>{
+        "emailVisibility": emailVisibility,
+        "password": passwd,
+        "passwordConfirm": passwd,
+        "key": key,
+      };
+
+      final record = await pb.collection(tableName).create(body: body);
+      user.value = UserModel.fromRecordModel(record);
+    }
 
     await HiveService.putBoxValue(IS_FIRST_INSTALL, true);
     await HiveService.putBoxValue(USER_ID, user.value.id);
