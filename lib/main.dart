@@ -14,8 +14,6 @@ import 'firebase_options.dart';
 import 'service/vender/hive.dart';
 
 // TODO:: 디플로이 준비
-
-// TODO:: 댓글, 질문 삭제, 블럭시 에니메이션 추가
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
