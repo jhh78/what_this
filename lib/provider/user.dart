@@ -120,7 +120,7 @@ class UserProvider extends GetxService {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final path = directory.path;
-      final fileName = 'profile_image.png';
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}_profile_image.png';
 
       if (!await image.exists()) {
         log('Image file does not exist');

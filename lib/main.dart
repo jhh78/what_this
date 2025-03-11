@@ -14,6 +14,9 @@ import 'firebase_options.dart';
 import 'service/vender/hive.dart';
 
 // TODO:: 디플로이 준비
+// TODO :: 가이드라인 1.2 - 안전 - 사용자 생성 콘텐츠
+// TODO :: 지침 5.1.1(v) - 데이터 수집 및 저장
+// TODO :: 가이드라인 5.1.1 - 법률 - 개인정보 보호 - 데이터 수집 및 저장
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

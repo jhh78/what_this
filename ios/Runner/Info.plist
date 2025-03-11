@@ -46,7 +46,7 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>このアプリは写真を撮るためにカメラのアクセス権が必要です。</string>
+	<string>プロフィール写真の変更や質問登録を行うために、カメラの権限が必要です。設定からカメラの権限を許可してください。</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>このアプリは写真を保存するためにフォトライブラリのアクセス権が必要です。</string>
 	<key>io.flutter.embedded_views_preview</key>

@@ -6,6 +6,7 @@ import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/service/question.dart';
 import 'package:whats_this/service/vender/camera.dart';
+import 'package:whats_this/util/permission.dart';
 import 'package:whats_this/util/styles.dart';
 
 class QuestionAddScreen extends StatefulWidget {
@@ -143,8 +144,8 @@ class _QuestionAddScreenState extends State<QuestionAddScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            onPressed: () {
-                              pickImage();
+                            onPressed: () async {
+                              await checkCameraPermission(acceptFunc: pickImage);
                             },
                             icon: Icon(
                               Icons.camera,
