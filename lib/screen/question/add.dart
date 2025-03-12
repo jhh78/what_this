@@ -6,8 +6,8 @@ import 'package:whats_this/provider/home.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/service/question.dart';
 import 'package:whats_this/service/vender/camera.dart';
+import 'package:whats_this/util/permission.dart';
 import 'package:whats_this/util/styles.dart';
-import 'package:whats_this/widget/atoms/action_button.dart';
 
 class QuestionAddScreen extends StatefulWidget {
   const QuestionAddScreen({super.key});
@@ -120,12 +120,12 @@ class _QuestionAddScreenState extends State<QuestionAddScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('質問する'),
-      ),
-      body: SafeArea(
-        child: LayoutBuilder(
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('質問する'),
+        ),
+        body: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
               controller: scrollController,
@@ -144,12 +144,21 @@ class _QuestionAddScreenState extends State<QuestionAddScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            onPressed: () {
-                              pickImage();
+                            onPressed: () async {
+                              await checkCameraPermission(acceptFunc: pickImage);
                             },
                             icon: Icon(
                               Icons.camera,
-                              size: ICON_SIZE,
+                              size: ICON_SIZE_BIG,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              handleRegister();
+                            },
+                            icon: Icon(
+                              Icons.add_circle_outline,
+                              size: ICON_SIZE_BIG,
                             ),
                           ),
                         ],
@@ -188,15 +197,6 @@ class _QuestionAddScreenState extends State<QuestionAddScreen> {
           },
         ),
       ),
-      bottomNavigationBar: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: ActionButtonWidget(
-            buttonText: '質問する',
-            isUpdated: isUpdated,
-            onPressed: handleRegister,
-          )),
     );
   }
 }

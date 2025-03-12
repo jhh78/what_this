@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/provider/user.dart';
+import 'package:whats_this/screen/signin/sign_in.dart';
 import 'package:whats_this/service/vender/camera.dart';
 import 'package:whats_this/service/vender/hive.dart';
 import 'package:whats_this/util/constants.dart';
+import 'package:whats_this/util/permission.dart';
 import 'package:whats_this/util/styles.dart';
 import 'package:whats_this/util/util.dart';
 import 'package:whats_this/widget/atoms/action_button.dart';
@@ -18,21 +20,44 @@ class UserInfoScreen extends StatelessWidget {
   final CameraService cameraService = CameraService();
 
   ImageProvider<Object> getFileImageWidget() {
-    if (userProvider.tempProfileImage.value.path.isNotEmpty) {
-      return FileImage(userProvider.tempProfileImage.value);
-    } else if (userProvider.user.value.profile.isEmpty) {
+    try {
+      if (userProvider.tempProfileImage.value.path.isNotEmpty) {
+        return FileImage(userProvider.tempProfileImage.value);
+      } else if (userProvider.user.value.profile.isEmpty) {
+        return AssetImage('assets/avatar/default.png');
+      }
+
+      final dynamic imagePath = HiveService.getBoxValue(USER_PROFILE_IMAGE);
+      log('User Profile ImagePath: $imagePath');
+      if (imagePath != null && imagePath is String && imagePath.isNotEmpty) {
+        return FileImage(File(imagePath));
+      }
+
+      final fileUrl =
+          "${dotenv.env['POCKET_BASE_FILE_URL']}${userProvider.user.value.collectionId}/${userProvider.user.value.id}/${userProvider.user.value.profile}";
+      return NetworkImage(fileUrl);
+    } catch (e, stackTrace) {
+      log(e.toString(), stackTrace: stackTrace);
       return AssetImage('assets/avatar/default.png');
     }
+  }
 
-    final dynamic imagePath = HiveService.getBoxValue(USER_PROFILE_IMAGE);
-    log('User Profile ImagePath: $imagePath');
-    if (imagePath != null && imagePath is String && imagePath.isNotEmpty) {
-      return FileImage(File(imagePath));
-    }
-
-    final fileUrl =
-        "${dotenv.env['POCKET_BASE_FILE_URL']}${userProvider.user.value.collectionId}/${userProvider.user.value.id}/${userProvider.user.value.profile}";
-    return NetworkImage(fileUrl);
+  void handleUserDelete() {
+    Get.dialog(
+      AlertDialog(
+        title: Text('ユーザー退会'),
+        content: Text('本当に退会しますか？退会のため認証が必要な場合もあります。'),
+        actions: [
+          ActionButtonWidget(
+              buttonText: '退会する',
+              isUpdated: false,
+              onPressed: () async {
+                await userProvider.deleteUser();
+                Get.offAll(() => SignInScreen());
+              }),
+        ],
+      ),
+    );
   }
 
   Widget renderUserInfoContents(BuildContext context) {
@@ -48,16 +73,18 @@ class UserInfoScreen extends StatelessWidget {
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: () => userProvider.pickImage(),
+              onTap: () => checkCameraPermission(
+                acceptFunc: () => userProvider.pickImage(),
+              ),
               child: CircleAvatar(
-                radius: 120,
                 backgroundImage: getFileImageWidget(),
+                radius: 120,
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: Icon(
                     Icons.camera_alt,
                     color: Colors.white,
-                    size: ICON_SIZE,
+                    size: ICON_SIZE_BIG,
                   ),
                 ),
               ),
@@ -113,6 +140,16 @@ class UserInfoScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text('会員情報', style: Theme.of(context).textTheme.headlineMedium),
           centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: IconButton(
+                icon: Icon(Icons.remove_circle_outline_rounded),
+                onPressed: handleUserDelete,
+                iconSize: ICON_SIZE,
+              ),
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

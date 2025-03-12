@@ -29,4 +29,18 @@ class HiveService {
       _box = null;
     }
   }
+
+  static Future<void> deleteBoxValue(String name) async {
+    if (_box == null) {
+      throw HiveError('Box has not been initialized.');
+    }
+    await _box!.delete(name);
+  }
+
+  static Future<void> clearBox() async {
+    if (_box == null) {
+      throw HiveError('Box has not been initialized.');
+    }
+    await _box!.clear();
+  }
 }

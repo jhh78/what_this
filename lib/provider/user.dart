@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:whats_this/model/user.dart';
+import 'package:whats_this/service/vender/auth.dart';
 import 'package:whats_this/service/vender/camera.dart';
 import 'package:whats_this/service/vender/hive.dart';
 import 'package:whats_this/util/constants.dart';
@@ -51,7 +52,7 @@ class UserProvider extends GetxService {
   }
 
   Future<void> createUser() async {
-    // 회원등록
+    // 회원조회
     final firebaseUser = FirebaseAuth.instance.currentUser;
 
     if (firebaseUser == null) {
@@ -60,19 +61,28 @@ class UserProvider extends GetxService {
 
     final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
 
-    final passwd = firebaseUser.metadata.hashCode.toString();
-    final key = firebaseUser.uid;
-    final emailVisibility = firebaseUser.emailVerified;
+    final auth = await pb.collection(tableName).getList(
+          sort: '-created',
+          filter: 'key="${firebaseUser.uid}"',
+        );
 
-    final body = <String, dynamic>{
-      "emailVisibility": emailVisibility,
-      "password": passwd,
-      "passwordConfirm": passwd,
-      "key": key,
-    };
+    if (auth.items.isNotEmpty) {
+      user.value = UserModel.fromRecordModel(auth.items.first);
+    } else {
+      final passwd = firebaseUser.metadata.hashCode.toString();
+      final key = firebaseUser.uid;
+      final emailVisibility = firebaseUser.emailVerified;
 
-    final record = await pb.collection(tableName).create(body: body);
-    user.value = UserModel.fromRecordModel(record);
+      final body = <String, dynamic>{
+        "emailVisibility": emailVisibility,
+        "password": passwd,
+        "passwordConfirm": passwd,
+        "key": key,
+      };
+
+      final record = await pb.collection(tableName).create(body: body);
+      user.value = UserModel.fromRecordModel(record);
+    }
 
     await HiveService.putBoxValue(IS_FIRST_INSTALL, true);
     await HiveService.putBoxValue(USER_ID, user.value.id);
@@ -111,7 +121,7 @@ class UserProvider extends GetxService {
     try {
       final directory = await getApplicationDocumentsDirectory();
       final path = directory.path;
-      final fileName = 'profile_image.png';
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}_profile_image.png';
 
       if (!await image.exists()) {
         log('Image file does not exist');
@@ -128,5 +138,13 @@ class UserProvider extends GetxService {
     } catch (e) {
       log('Error saving image: $e');
     }
+  }
+
+  Future<void> deleteUser() async {
+    isUpdated.value = true;
+    // 파베아이디를 삭제하면 재가입시 새로운 아이디가 생성되므로 포켓베이스 아니디는 삭제 하지 않음
+    await AuthService.deleteUser();
+    await HiveService.clearBox();
+    isUpdated.value = false;
   }
 }
