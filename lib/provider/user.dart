@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:whats_this/model/user.dart';
+import 'package:whats_this/service/vender/auth.dart';
 import 'package:whats_this/service/vender/camera.dart';
 import 'package:whats_this/service/vender/hive.dart';
 import 'package:whats_this/util/constants.dart';
@@ -137,5 +138,13 @@ class UserProvider extends GetxService {
     } catch (e) {
       log('Error saving image: $e');
     }
+  }
+
+  Future<void> deleteUser() async {
+    isUpdated.value = true;
+    // 파베아이디를 삭제하면 재가입시 새로운 아이디가 생성되므로 포켓베이스 아니디는 삭제 하지 않음
+    await AuthService.deleteUser();
+    await HiveService.clearBox();
+    isUpdated.value = false;
   }
 }

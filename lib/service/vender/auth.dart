@@ -68,6 +68,26 @@ class AuthService {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
+  static Future<void> reauthenticateWithGoogle() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      // Reauthenticate the user
+      await user.reauthenticateWithCredential(credential);
+    }
+  }
+
   // 아이폰에서만 작동
   // 애플 로그인
   static Future<UserCredential> signInWithApple() async {
@@ -90,8 +110,72 @@ class AuthService {
     }
   }
 
+  static Future<void> reauthenticateWithApple() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      // Reauthenticate the user
+      await user.reauthenticateWithCredential(oauthCredential);
+    }
+  }
+
   static Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
+  }
+
+  static Future<void> reauthenticateUser(String email, String password) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final credential = EmailAuthProvider.credential(email: email, password: password);
+      await user.reauthenticateWithCredential(credential);
+    }
+  }
+
+  static Future<void> deleteUser() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        // 사용자가 Google 인증을 사용한 경우
+        if (user.providerData.any((info) => info.providerId == 'google.com')) {
+          await reauthenticateWithGoogle();
+        }
+        // 사용자가 Apple 인증을 사용한 경우
+        else if (user.providerData.any((info) => info.providerId == 'apple.com')) {
+          await reauthenticateWithApple();
+        }
+
+        // 사용자 삭제
+        await user.delete();
+        await signOut();
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'requires-recent-login') {
+          log('Reauthentication required.');
+          throw Exception('Reauthentication required.');
+        } else {
+          rethrow;
+        }
+      }
+    }
+  }
+
+  static Future<void> sendPasswordResetEmail(String email) async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
+
+  static Future<void> updatePassword(String password) async {
+    final user = FirebaseAuth.instance.currentUser;
+    await user?.updatePassword(password);
   }
 
   static User? getCurrentUser() {

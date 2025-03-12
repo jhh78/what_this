@@ -18,9 +18,6 @@ firebase*
 Info.plist
 AndroidManifest.xml
 
-ios*
-android*
-
 # IntelliJ related
 *.iml
 *.ipr

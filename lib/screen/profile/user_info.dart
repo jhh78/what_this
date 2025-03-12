@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/provider/user.dart';
+import 'package:whats_this/screen/signin/sign_in.dart';
 import 'package:whats_this/service/vender/camera.dart';
 import 'package:whats_this/service/vender/hive.dart';
 import 'package:whats_this/util/constants.dart';
@@ -39,6 +40,24 @@ class UserInfoScreen extends StatelessWidget {
       log(e.toString(), stackTrace: stackTrace);
       return AssetImage('assets/avatar/default.png');
     }
+  }
+
+  void handleUserDelete() {
+    Get.dialog(
+      AlertDialog(
+        title: Text('ユーザー退会'),
+        content: Text('本当に退会しますか？退会のため認証が必要な場合もあります。'),
+        actions: [
+          ActionButtonWidget(
+              buttonText: '退会する',
+              isUpdated: false,
+              onPressed: () async {
+                await userProvider.deleteUser();
+                Get.offAll(() => SignInScreen());
+              }),
+        ],
+      ),
+    );
   }
 
   Widget renderUserInfoContents(BuildContext context) {
@@ -121,6 +140,16 @@ class UserInfoScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text('会員情報', style: Theme.of(context).textTheme.headlineMedium),
           centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: IconButton(
+                icon: Icon(Icons.remove_circle_outline_rounded),
+                onPressed: handleUserDelete,
+                iconSize: ICON_SIZE,
+              ),
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
