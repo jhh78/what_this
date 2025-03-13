@@ -15,7 +15,6 @@ import 'service/vender/hive.dart';
 
 // TODO:: 디플로이 준비
 // TODO :: 가이드라인 1.2 - 안전 - 사용자 생성 콘텐츠 -> 튜토얼 만들기
-// TODO :: 지침 5.1.1(v) - 데이터 수집 및 저장  -> 계정삭제 만들기 ok  -> 삭제시 UI 조절하기
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
