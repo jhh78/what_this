@@ -17,7 +17,7 @@ google-*
 firebase*
 Info.plist
 AndroidManifest.xml
-
+**/Debug/
 # IntelliJ related
 *.iml
 *.ipr
