@@ -43,6 +43,19 @@ class UserInfoScreen extends StatelessWidget {
   }
 
   void handleUserDelete() {
+    if (userProvider.isDeleted.value) {
+      Get.snackbar(
+        '処理中',
+        'ユーザー情報を削除しています。',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(24),
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+        forwardAnimationCurve: Curves.easeOutBack,
+      );
+      return;
+    }
+
     Get.dialog(
       AlertDialog(
         title: Text('ユーザー退会'),
@@ -52,8 +65,22 @@ class UserInfoScreen extends StatelessWidget {
               buttonText: '退会する',
               isUpdated: false,
               onPressed: () async {
-                await userProvider.deleteUser();
-                Get.offAll(() => SignInScreen());
+                try {
+                  Get.back();
+                  await userProvider.deleteUser();
+                  Get.offAll(() => SignInScreen());
+                } catch (e) {
+                  await Future.delayed(const Duration(seconds: 1));
+                  Get.snackbar(
+                    'エラー',
+                    'ユーザー情報の削除に失敗しました。',
+                    snackPosition: SnackPosition.BOTTOM,
+                    margin: const EdgeInsets.all(24),
+                    backgroundColor: Colors.redAccent,
+                    colorText: Colors.white,
+                    forwardAnimationCurve: Curves.easeOutBack,
+                  );
+                }
               }),
         ],
       ),
@@ -151,9 +178,25 @@ class UserInfoScreen extends StatelessWidget {
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Obx(() => renderUserInfoContents(context)),
+        body: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Obx(() => renderUserInfoContents(context)),
+            ),
+            Positioned.fill(
+              child: Obx(
+                () => userProvider.isDeleted.value
+                    ? Container(
+                        color: Colors.black.withAlpha(200),
+                        child: Center(
+                          child: const CircularProgressIndicator(),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            )
+          ],
         ),
       ),
     );

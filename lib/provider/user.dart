@@ -17,6 +17,7 @@ class UserProvider extends GetxService {
   Rx<File> tempProfileImage = File('').obs;
   RxBool isLoading = false.obs;
   RxBool isUpdated = false.obs;
+  RxBool isDeleted = false.obs;
 
   final tableName = 'user';
   final CameraService cameraService = CameraService();
@@ -141,10 +142,14 @@ class UserProvider extends GetxService {
   }
 
   Future<void> deleteUser() async {
-    isUpdated.value = true;
-    // 파베아이디를 삭제하면 재가입시 새로운 아이디가 생성되므로 포켓베이스 아니디는 삭제 하지 않음
-    await AuthService.deleteUser();
-    await HiveService.clearBox();
-    isUpdated.value = false;
+    try {
+      isDeleted.value = true;
+      await AuthService.deleteUser();
+      await HiveService.clearBox();
+    } catch (e) {
+      rethrow;
+    } finally {
+      isDeleted.value = false;
+    }
   }
 }

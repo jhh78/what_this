@@ -158,13 +158,8 @@ class AuthService {
         // 사용자 삭제
         await user.delete();
         await signOut();
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'requires-recent-login') {
-          log('Reauthentication required.');
-          throw Exception('Reauthentication required.');
-        } else {
-          rethrow;
-        }
+      } catch (e) {
+        rethrow;
       }
     }
   }
