@@ -5,6 +5,7 @@ const String BLOCK_LIST_QUESTION = 'block_list_question';
 const String BLOCK_LIST_COMMENT = 'block_list_comment';
 const String THUMB_CHOICE = 'thumb_choice';
 const String USER_PROFILE_IMAGE = 'user_profile_image';
+const String USER_TUTORIAL = 'user_tutorial';
 
 const String QUESTION_LIST = 'home';
 const String USER_INFO = 'user_info';

@@ -6,7 +6,10 @@ import 'package:whats_this/screen/question/detail.dart';
 import 'package:whats_this/screen/my_question/my_question.dart';
 import 'package:whats_this/screen/question/list.dart';
 import 'package:whats_this/screen/profile/user_info.dart';
+import 'package:whats_this/screen/tutorial.dart';
 import 'package:whats_this/service/home.dart';
+import 'package:whats_this/service/vender/hive.dart';
+import 'package:whats_this/util/constants.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -46,42 +49,63 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  Future<Widget> renderHomeContents() async {
+    final isFirst = await HiveService.getBoxValue(USER_TUTORIAL);
+    if (isFirst == null) {
+      return TutorialScreen();
+    }
+
+    return Scaffold(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Obx(
+              () => IndexedStack(
+                index: homeService.getScreenIndex(),
+                children: [
+                  UserInfoScreen(),
+                  QuestionListScreen(),
+                  QuestionDetailScreen(),
+                  MyQuestionScreen(),
+                ],
+              ),
+            ),
+            Positioned.fill(
+              child: Obx(
+                () => userProvider.isUpdated.value
+                    ? Container(
+                        color: Colors.black.withAlpha(200),
+                        child: Center(
+                          child: const CircularProgressIndicator(),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Obx(() => renderBottomNavigationBar()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      child: Scaffold(
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Obx(
-                () => IndexedStack(
-                  index: homeService.getScreenIndex(),
-                  children: [
-                    UserInfoScreen(),
-                    QuestionListScreen(),
-                    QuestionDetailScreen(),
-                    MyQuestionScreen(),
-                  ],
+      child: FutureBuilder(
+          future: renderHomeContents(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
                 ),
-              ),
-              Positioned.fill(
-                child: Obx(
-                  () => userProvider.isUpdated.value
-                      ? Container(
-                          color: Colors.black.withAlpha(200),
-                          child: Center(
-                            child: const CircularProgressIndicator(),
-                          ),
-                        )
-                      : const SizedBox.shrink(),
-                ),
-              ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: Obx(() => renderBottomNavigationBar()),
-      ),
+              );
+            }
+
+            return snapshot.data!;
+          }),
     );
   }
 }
