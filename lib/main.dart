@@ -9,13 +9,10 @@ import 'package:upgrader/upgrader.dart';
 import 'package:whats_this/screen/home/home.dart';
 import 'package:whats_this/screen/signin/sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:whats_this/screen/tutorial.dart';
 import 'package:whats_this/service/vender/auth.dart';
-import 'package:whats_this/util/constants.dart';
 import 'firebase_options.dart';
 import 'service/vender/hive.dart';
 
-// TODO :: 가이드라인 1.2 - 안전 - 사용자 생성 콘텐츠 -> 튜토얼 만들기
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
