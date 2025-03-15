@@ -1,2 +1,0 @@
-/Users/jeonghoeheon/git/whats_this/android/app/.cxx/RelWithDebInfo/6p5t1q3l/x86/CMakeFiles/edit_cache.dir
-/Users/jeonghoeheon/git/whats_this/android/app/.cxx/RelWithDebInfo/6p5t1q3l/x86/CMakeFiles/rebuild_cache.dir

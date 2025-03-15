@@ -37,7 +37,9 @@ AndroidManifest.xml
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
+**/build/
+**/.cxx/
+**/Debug/
 
 # Symbolication related
 app.*.symbols

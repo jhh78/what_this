@@ -1,1 +1,0 @@
-/Users/jeonghoeheon/git/whats_this/build/app/intermediates/cxx/RelWithDebInfo/6p5t1q3l/obj/arm64-v8a
