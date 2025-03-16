@@ -37,6 +37,8 @@ void main() async {
   runApp(MyApp());
 }
 
+// TODO ::: 각 페이지에 대한 리펙토링 시도하기
+// TODO ::: 애플 권한 요청창 안나온다.
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 

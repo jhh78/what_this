@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:image/image.dart' as img;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CameraService {
   final ImagePicker picker = ImagePicker();
@@ -18,12 +19,17 @@ class CameraService {
   }
 
   Future<File?> pickImageFromCamera() async {
-    final XFile? image = await picker.pickImage(source: ImageSource.camera);
-    if (image != null) {
-      return File(image.path);
-    }
+    try {
+      final XFile? image = await picker.pickImage(source: ImageSource.camera);
+      if (image != null) {
+        return File(image.path);
+      }
 
-    return null;
+      return null;
+    } catch (err) {
+      openAppSettings();
+      return null;
+    }
   }
 
   Future<List<http.MultipartFile>> convertImageToMultipartFile({required String key, required File image, required int size}) async {

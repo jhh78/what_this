@@ -9,7 +9,6 @@ import 'package:whats_this/screen/signin/sign_in.dart';
 import 'package:whats_this/service/vender/camera.dart';
 import 'package:whats_this/service/vender/hive.dart';
 import 'package:whats_this/util/constants.dart';
-import 'package:whats_this/util/permission.dart';
 import 'package:whats_this/util/styles.dart';
 import 'package:whats_this/util/util.dart';
 import 'package:whats_this/widget/atoms/action_button.dart';
@@ -100,9 +99,7 @@ class UserInfoScreen extends StatelessWidget {
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: () => checkCameraPermission(
-                acceptFunc: () => userProvider.pickImage(),
-              ),
+              onTap: () => userProvider.pickImage(),
               child: CircleAvatar(
                 backgroundImage: getFileImageWidget(),
                 radius: 120,
