@@ -34,83 +34,39 @@ void main() async {
   await HiveService.init();
   await AuthService.checkInitialized();
 
-  runApp(MyApp());
+  // 사용자 인증 상태 확인
+  final currentUser = await AuthService.checkUserStatus();
+
+  runApp(MyApp(currentUser: currentUser));
 }
 
-// TODO ::: 각 페이지에 대한 리펙토링 시도하기
-// TODO ::: 애플 권한 요청창 안나온다.
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class MyApp extends StatelessWidget {
+  final User? currentUser;
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
-  void dispose() {
-    HiveService.closeBox();
-    super.dispose();
-  }
-
-  Future<Widget> renderNextScreen(User? currentUser) async {
-    if (currentUser == null) {
-      return SignInScreen();
-    }
-
-    return HomeScreen();
-  }
+  const MyApp({super.key, required this.currentUser});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<User?>(
-      future: AuthService.checkUserStatus(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return MaterialApp(
-            home: Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          );
-        } else {
-          return GetMaterialApp(
-            themeMode: ThemeMode.dark,
-            debugShowCheckedModeBanner: kDebugMode,
-            theme: ThemeData(
-              useMaterial3: true,
-            ),
-            darkTheme: ThemeData(
-              useMaterial3: true,
-              brightness: Brightness.dark,
-            ),
-            builder: (context, child) {
-              return MediaQuery(
-                data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
-                child: child!,
-              );
-            },
-            home: UpgradeAlert(
-              dialogStyle: UpgradeDialogStyle.cupertino,
-              child: FutureBuilder<Widget>(
-                future: renderNextScreen(snapshot.data),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Scaffold(
-                      body: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-
-                  return snapshot.data!;
-                },
-              ),
-            ),
-          );
-        }
+    return GetMaterialApp(
+      themeMode: ThemeMode.dark,
+      debugShowCheckedModeBanner: kDebugMode,
+      theme: ThemeData(
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+      ),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
+          child: child!,
+        );
       },
+      home: UpgradeAlert(
+        dialogStyle: UpgradeDialogStyle.cupertino,
+        child: currentUser == null ? SignInScreen() : HomeScreen(),
+      ),
     );
   }
 }

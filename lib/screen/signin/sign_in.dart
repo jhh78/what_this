@@ -12,44 +12,53 @@ class SignInScreen extends StatelessWidget {
 
   final UserProvider userProvider = Get.put(UserProvider());
 
-  handleMovePolicy() {
-    Get.to(() => PolicyScreen(), transition: Transition.upToDown, duration: Duration(milliseconds: 500));
+  void _handleMovePolicy() {
+    Get.to(
+      () => const PolicyScreen(),
+      transition: Transition.upToDown,
+      duration: const Duration(milliseconds: 500),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        body: Stack(
+    return Scaffold(
+      body: Stack(
+        children: [
+          _buildBackgroundImage(),
+          _buildSignInButtons(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBackgroundImage() {
+    return Positioned.fill(
+      child: Image.asset(
+        "assets/signIn.png",
+        fit: BoxFit.fill,
+      ),
+    );
+  }
+
+  Widget _buildSignInButtons() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 100, left: 30, right: 30),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Positioned.fill(
-              child: Image.asset(
-                "assets/signIn.png",
-                fit: BoxFit.fill,
+            if (Platform.isAndroid)
+              SignInButton(
+                Buttons.GoogleDark,
+                onPressed: _handleMovePolicy,
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 100, left: 30, right: 30),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (Platform.isAndroid)
-                      SignInButton(
-                        Buttons.GoogleDark,
-                        onPressed: handleMovePolicy,
-                      ),
-                    if (Platform.isIOS)
-                      SignInButton(
-                        Buttons.AppleDark,
-                        onPressed: handleMovePolicy,
-                      ),
-                  ],
-                ),
+            if (Platform.isIOS)
+              SignInButton(
+                Buttons.AppleDark,
+                onPressed: _handleMovePolicy,
               ),
-            ),
           ],
         ),
       ),

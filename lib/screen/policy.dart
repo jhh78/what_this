@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/service/vender/auth.dart';
-import 'package:whats_this/util/styles.dart';
+import 'package:whats_this/widget/atoms/simple_button.dart';
 
 import 'home/home.dart';
 
@@ -25,23 +25,28 @@ class _PolicyScreenState extends State<PolicyScreen> {
 
   Future<void> _handleSignIn() async {
     try {
+      setState(() => isLoading = true);
+
       if (Platform.isAndroid) {
         await AuthService.signInWithGoogle();
       } else if (Platform.isIOS) {
         await AuthService.signInWithApple();
       }
 
-      setState(() {
-        isLoading = true;
-      });
-
       await userProvider.createUser();
-
       Get.offAll(() => HomeScreen(), transition: Transition.fade);
     } catch (error) {
+      setState(() => isLoading = false);
+
       if (error is FirebaseAuthException && error.code == 'user-disabled') {
-        Get.snackbar('Error', 'The user account has been disabled by an administrator.',
-            snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white, margin: EdgeInsets.all(10));
+        Get.snackbar(
+          'Error',
+          'The user account has been disabled by an administrator.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(10),
+        );
       } else {
         log('Error reloading user: $error');
       }
@@ -50,26 +55,21 @@ class _PolicyScreenState extends State<PolicyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_drop_up_sharp,
-            size: ICON_SIZE,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Get.back(),
           ),
-          onPressed: () {
-            Get.back();
-          },
+          centerTitle: true,
+          title: const Text('利用規約'),
         ),
-        title: const Text('Privacy Policy'),
-      ),
-      body: SafeArea(
-        child: Stack(
+        body: Stack(
           children: [
             Column(
               children: [
                 Expanded(
-                  flex: 9,
                   child: WebViewWidget(
                     controller: WebViewController()
                       ..setBackgroundColor(Colors.white)
@@ -78,27 +78,16 @@ class _PolicyScreenState extends State<PolicyScreen> {
                       ..loadRequest(Uri.parse(dotenv.env['PRIVACY_POLICY_URL_JP']!)),
                   ),
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      side: BorderSide(color: Colors.grey),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0),
-                      ),
-                      backgroundColor: Colors.white),
-                  onPressed: _handleSignIn,
-                  child: Text(
-                    'Agree and Continue',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: Colors.black87,
-                        ),
-                  ),
+                SimpleButtonWidget(
+                  onClick: _handleSignIn,
+                  title: '同意する',
                 ),
               ],
             ),
             if (isLoading)
               Container(
-                color: Colors.black.withAlpha(100),
-                child: Center(
+                color: Colors.black.withAlpha(200),
+                child: const Center(
                   child: CircularProgressIndicator(),
                 ),
               ),

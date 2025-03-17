@@ -13,7 +13,7 @@ class TutorialPagination extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: MediaQuery.of(context).size.height / 5, // 페이지 네비게이션의 Y축 위치
+      bottom: MediaQuery.of(context).size.height / 7, // 페이지 네비게이션의 Y축 위치
       left: 0,
       right: 0,
       child: Row(
