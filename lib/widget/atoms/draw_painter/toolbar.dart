@@ -4,13 +4,6 @@ import 'package:whats_this/widget/atoms/draw_painter/eraser_button.dart';
 import 'stroke_width_dropdown.dart';
 
 class ToolbarWidget extends StatelessWidget {
-  final Color selectedColor;
-  final VoidCallback onPickColor;
-  final double selectedStrokeWidth;
-  final ValueChanged<int?> onStrokeWidthChanged;
-  final bool isEraserMode;
-  final VoidCallback onToggleEraser;
-
   const ToolbarWidget({
     super.key,
     required this.selectedColor,
@@ -21,6 +14,13 @@ class ToolbarWidget extends StatelessWidget {
     required this.onToggleEraser,
   });
 
+  final Color selectedColor;
+  final VoidCallback onPickColor;
+  final double selectedStrokeWidth;
+  final ValueChanged<int?> onStrokeWidthChanged;
+  final bool isEraserMode;
+  final VoidCallback onToggleEraser;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -30,17 +30,20 @@ class ToolbarWidget extends StatelessWidget {
           selectedColor: selectedColor,
           onPickColor: onPickColor,
         ),
-        const SizedBox(width: 16),
         StrokeWidthDropdownWidget(
           selectedStrokeWidth: selectedStrokeWidth,
           onStrokeWidthChanged: onStrokeWidthChanged,
         ),
-        const SizedBox(width: 16),
         EraserButtonWidget(
           isEraserMode: isEraserMode,
           onToggleEraser: onToggleEraser,
         ),
-      ],
+      ]
+          .map((widget) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: widget,
+              ))
+          .toList(),
     );
   }
 }

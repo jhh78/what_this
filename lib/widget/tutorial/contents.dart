@@ -18,7 +18,7 @@ class TutorialContents extends StatelessWidget {
   final String description;
   final bool isLastPage;
 
-  Future<void> handleNextPage() async {
+  Future<void> _handleNextPage() async {
     await HiveService.putBoxValue(USER_TUTORIAL, true);
     Get.offAll(() => HomeScreen());
   }
@@ -27,54 +27,65 @@ class TutorialContents extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Card(
-        elevation: 8, // 카드의 그림자 깊이
+        elevation: 8,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16), // 카드의 둥근 모서리
+          borderRadius: BorderRadius.circular(16),
         ),
-        color: color, // 카드 배경색 설정
+        color: color,
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.9, // 화면 높이의 90%를 차지
-          width: MediaQuery.of(context).size.width * 0.9, // 화면 너비의 90%를 차지
+          height: MediaQuery.of(context).size.height * 0.9,
+          width: MediaQuery.of(context).size.width * 0.9,
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
+                _buildTitle(context),
                 const SizedBox(height: 16),
-                Text(
-                  description,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.white70,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                if (isLastPage) ...[
-                  const SizedBox(height: 32),
-                  ElevatedButton(
-                    onPressed: handleNextPage,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    child: const Text('スタート'),
-                  ),
-                ],
+                _buildDescription(),
+                if (isLastPage) _buildStartButton(context),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTitle(BuildContext context) {
+    return Text(
+      title,
+      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildDescription() {
+    return Text(
+      description,
+      style: const TextStyle(
+        fontSize: 16,
+        color: Colors.white70,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildStartButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 32),
+      child: ElevatedButton(
+        onPressed: _handleNextPage,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        child: const Text('スタート'),
       ),
     );
   }

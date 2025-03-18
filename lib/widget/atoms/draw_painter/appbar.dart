@@ -1,26 +1,46 @@
 import 'package:flutter/material.dart';
 
 class DrawPainterAppbawWidget extends StatelessWidget implements PreferredSizeWidget {
-  final Function initParameter;
-  final Function({required BuildContext context}) saveAndClose;
-
   const DrawPainterAppbawWidget({
     super.key,
     required this.initParameter,
     required this.saveAndClose,
   });
 
-  TextButton renderTextButton({
+  final VoidCallback initParameter;
+  final Function({required BuildContext context}) saveAndClose;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: const Text('画像描画'),
+      actions: [
+        _buildTextButton(
+          context: context,
+          onPressed: initParameter,
+          text: '初期化',
+        ),
+        const SizedBox(width: 10),
+        _buildTextButton(
+          context: context,
+          onPressed: () => saveAndClose(context: context),
+          text: '反映',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextButton({
     required BuildContext context,
-    required VoidCallback callback,
+    required VoidCallback onPressed,
     required String text,
   }) {
     return TextButton(
-      onPressed: () => callback(),
+      onPressed: onPressed,
       style: TextButton.styleFrom(
-        side: const BorderSide(color: Colors.white, width: 1.0), // 외곽선 추가
+        side: const BorderSide(color: Colors.white, width: 1.0),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4.0), // 모서리 둥글게 설정
+          borderRadius: BorderRadius.circular(4.0),
         ),
       ),
       child: Text(
@@ -31,25 +51,5 @@ class DrawPainterAppbawWidget extends StatelessWidget implements PreferredSizeWi
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      title: const Text('画像描画'),
-      actions: [
-        renderTextButton(
-          context: context,
-          callback: () => initParameter(),
-          text: '初期化',
-        ),
-        const SizedBox(width: 10),
-        renderTextButton(
-          context: context,
-          callback: () => saveAndClose(context: context),
-          text: '反映',
-        ),
-      ],
-    );
-  }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight); // AppBar의 기본 높이
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

@@ -13,42 +13,44 @@ class ReasonFormWidget extends StatelessWidget {
     return Form(
       key: formProvider.formKey,
       child: DropdownButtonFormField<String>(
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return '通報理由を選択してください';
-          }
-          return null;
-        },
-        decoration: InputDecoration(
-          hintText: '理由を選択してください',
-          border: OutlineInputBorder(),
-        ),
-        items: [
-          DropdownMenuItem(
-            value: 'スパム',
-            child: Text('スパム'),
-          ),
-          DropdownMenuItem(
-            value: '不適切な内容',
-            child: Text('不適切な内容'),
-          ),
-          DropdownMenuItem(
-            value: '暴力的な内容',
-            child: Text('暴力的な内容'),
-          ),
-          DropdownMenuItem(
-            value: '差別的な内容',
-            child: Text('差別的な内容'),
-          ),
-          DropdownMenuItem(
-            value: 'その他',
-            child: Text('その他'),
-          ),
-        ],
+        validator: _validateReason,
+        decoration: _inputDecoration(),
+        items: _buildDropdownItems(),
         onChanged: (value) {
           formProvider.setData(REPORT_REASON_KIND, value.toString());
         },
       ),
     );
+  }
+
+  String? _validateReason(String? value) {
+    if (value == null || value.isEmpty) {
+      return '通報理由を選択してください';
+    }
+    return null;
+  }
+
+  InputDecoration _inputDecoration() {
+    return const InputDecoration(
+      hintText: '理由を選択してください',
+      border: OutlineInputBorder(),
+    );
+  }
+
+  List<DropdownMenuItem<String>> _buildDropdownItems() {
+    const reasons = [
+      'スパム',
+      '不適切な内容',
+      '暴力的な内容',
+      '差別的な内容',
+      'その他',
+    ];
+
+    return reasons
+        .map((reason) => DropdownMenuItem(
+              value: reason,
+              child: Text(reason),
+            ))
+        .toList();
   }
 }

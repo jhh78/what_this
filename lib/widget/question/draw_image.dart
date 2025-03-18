@@ -95,58 +95,68 @@ class _DrawImageState extends State<DrawImage> {
       ),
       body: Column(
         children: [
-          ToolbarWidget(
-            selectedColor: _selectedColor,
-            onPickColor: _pickColor,
-            selectedStrokeWidth: _selectedStrokeWidth,
-            onStrokeWidthChanged: (int? newValue) {
-              setState(() {
-                _selectedStrokeWidth = newValue!.toDouble();
-              });
-            },
-            isEraserMode: _isEraserMode,
-            onToggleEraser: () {
-              setState(() {
-                _isEraserMode = !_isEraserMode;
-              });
-            },
-          ),
-          Divider(),
-          DrawingAreaWidget(
-            points: _points,
-            eraserPosition: _eraserPosition,
-            isEraserMode: _isEraserMode,
-            selectedStrokeWidth: _selectedStrokeWidth,
-            selectedColor: _selectedColor,
-            onPanUpdate: (Offset position) {
-              setState(() {
-                if (_isEraserMode) {
-                  _eraserPosition = position;
-                  _points.add({
-                    'offset': position,
-                    'color': Colors.white,
-                    'strokeWidth': _selectedStrokeWidth,
-                  });
-                } else {
-                  _points.add({
-                    'offset': position,
-                    'color': _selectedColor,
-                    'strokeWidth': _selectedStrokeWidth,
-                  });
-                }
-              });
-            },
-            onPanEnd: () {
-              setState(() {
-                if (_isEraserMode) {
-                  _eraserPosition = null;
-                } else {
-                  _points.add({'offset': null, 'color': null, 'strokeWidth': null});
-                }
-              });
-            },
-          ),
+          _buildToolbar(),
+          const Divider(),
+          _buildDrawingArea(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildToolbar() {
+    return ToolbarWidget(
+      selectedColor: _selectedColor,
+      onPickColor: _pickColor,
+      selectedStrokeWidth: _selectedStrokeWidth,
+      onStrokeWidthChanged: (int? newValue) {
+        setState(() {
+          _selectedStrokeWidth = newValue!.toDouble();
+        });
+      },
+      isEraserMode: _isEraserMode,
+      onToggleEraser: () {
+        setState(() {
+          _isEraserMode = !_isEraserMode;
+        });
+      },
+    );
+  }
+
+  Widget _buildDrawingArea() {
+    return Expanded(
+      child: DrawingAreaWidget(
+        points: _points,
+        eraserPosition: _eraserPosition,
+        isEraserMode: _isEraserMode,
+        selectedStrokeWidth: _selectedStrokeWidth,
+        selectedColor: _selectedColor,
+        onPanUpdate: (Offset position) {
+          setState(() {
+            if (_isEraserMode) {
+              _eraserPosition = position;
+              _points.add({
+                'offset': position,
+                'color': Colors.white,
+                'strokeWidth': _selectedStrokeWidth,
+              });
+            } else {
+              _points.add({
+                'offset': position,
+                'color': _selectedColor,
+                'strokeWidth': _selectedStrokeWidth,
+              });
+            }
+          });
+        },
+        onPanEnd: () {
+          setState(() {
+            if (_isEraserMode) {
+              _eraserPosition = null;
+            } else {
+              _points.add({'offset': null, 'color': null, 'strokeWidth': null});
+            }
+          });
+        },
       ),
     );
   }

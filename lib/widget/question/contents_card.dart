@@ -27,87 +27,18 @@ class ContentsCardWidget extends StatelessWidget {
 
   final UserProvider userProvider = Get.put(UserProvider());
 
-  Widget renderIconButton() {
-    if (userProvider.user.value.id == questionModel.user.id) {
-      return Row(
-        children: [
-          if (onDelete != null)
-            IconButtonWidget(
-              color: Colors.red,
-              onPressed: onDelete!,
-              icon: Icons.delete_forever_outlined,
-            ),
-        ],
-      );
-    }
-
-    return Row(
-      children: [
-        if (onBlock != null)
-          IconButtonWidget(
-            color: Colors.red,
-            onPressed: onBlock!,
-            icon: Icons.block,
-          ),
-        if (onReport != null)
-          IconButtonWidget(
-            color: Colors.red,
-            onPressed: onReport!,
-            icon: Icons.notification_important_outlined,
-          ),
-      ],
-    );
-  }
-
-  ImageProvider<Object> getFileImageWidget(QuestionModel questionModel) {
-    if (questionModel.user.profile.toString().isEmpty) {
-      return AssetImage('assets/avatar/default.png');
-    }
-
-    final fileUrl =
-        "${dotenv.env['POCKET_BASE_FILE_URL']}${questionModel.user.collectionId}/${questionModel.user.id}/${questionModel.user.profile}";
-    return NetworkImage(fileUrl);
-  }
-
-  Widget renderImageArea() {
-    if (questionModel.files.isEmpty) {
-      return SizedBox.shrink();
-    }
-
-    final String imageIrl = "${dotenv.env['POCKET_BASE_FILE_URL']}${questionModel.collectionID}/${questionModel.id}/${questionModel.files}";
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: CachedNetworkImage(
-        imageUrl: imageIrl,
-        placeholder: (context, url) => Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.width * 1.18,
-          color: Colors.grey[300],
-          child: Center(
-            child: Icon(
-              Icons.image_search,
-              color: Colors.grey[700],
-              size: 50,
-            ),
-          ),
-        ),
-        errorWidget: (context, url, error) => Icon(Icons.error),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (questionModel.id.isEmpty) {
-      return NextPageButtonWidget(onTab: () {
-        if (nextPage != null) {
-          nextPage!();
-        }
-      });
-    }
+    return questionModel.id.isEmpty ? _buildNextPageButton() : _buildCard(context);
+  }
 
+  Widget _buildNextPageButton() {
+    return NextPageButtonWidget(onTab: () => nextPage);
+  }
+
+  Widget _buildCard(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(10.0),
+      margin: const EdgeInsets.all(10.0),
       child: Card(
         elevation: 5,
         shape: RoundedRectangleBorder(
@@ -120,42 +51,113 @@ class ContentsCardWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    backgroundImage: getFileImageWidget(questionModel),
-                    radius: 20,
-                  ),
-                  SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        getLevel(questionModel.user.exp),
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
-                      ),
-                      Text(
-                        questionModel.user.username,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  renderIconButton()
-                ],
-              ),
-              SizedBox(height: 10),
-              Text(
-                questionModel.contents,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black),
-              ),
+              _buildHeader(context),
+              const SizedBox(height: 10),
+              _buildContentText(context),
               DateAreaWidget(currentTime: questionModel.created),
-              SizedBox(height: 10),
-              renderImageArea(),
+              const SizedBox(height: 10),
+              _buildImageArea(),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      children: [
+        CircleAvatar(
+          backgroundImage: _getProfileImage(),
+          radius: 20,
+        ),
+        const SizedBox(width: 10),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              getLevel(questionModel.user.exp),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
+            ),
+            Text(
+              questionModel.user.username,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
+            ),
+          ],
+        ),
+        const Spacer(),
+        _buildActionButtons(),
+      ],
+    );
+  }
+
+  Widget _buildContentText(BuildContext context) {
+    return Text(
+      questionModel.contents,
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    final isCurrentUser = userProvider.user.value.id == questionModel.user.id;
+
+    return Row(
+      children: [
+        if (isCurrentUser && onDelete != null)
+          IconButtonWidget(
+            color: Colors.red,
+            onPressed: onDelete!,
+            icon: Icons.delete_forever_outlined,
+          ),
+        if (!isCurrentUser && onBlock != null)
+          IconButtonWidget(
+            color: Colors.red,
+            onPressed: onBlock!,
+            icon: Icons.block,
+          ),
+        if (!isCurrentUser && onReport != null)
+          IconButtonWidget(
+            color: Colors.red,
+            onPressed: onReport!,
+            icon: Icons.notification_important_outlined,
+          ),
+      ],
+    );
+  }
+
+  Widget _buildImageArea() {
+    if (questionModel.files.isEmpty) return const SizedBox.shrink();
+
+    final imageUrl = "${dotenv.env['POCKET_BASE_FILE_URL']}${questionModel.collectionID}/${questionModel.id}/${questionModel.files}";
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: CachedNetworkImage(
+        imageUrl: imageUrl,
+        placeholder: (context, url) => Container(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.width * 1.18,
+          color: Colors.grey[300],
+          child: Center(
+            child: Icon(
+              Icons.image_search,
+              color: Colors.grey[700],
+              size: 50,
+            ),
+          ),
+        ),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+      ),
+    );
+  }
+
+  ImageProvider<Object> _getProfileImage() {
+    if (questionModel.user.profile.toString().isEmpty) {
+      return const AssetImage('assets/avatar/default.png');
+    }
+
+    final fileUrl =
+        "${dotenv.env['POCKET_BASE_FILE_URL']}${questionModel.user.collectionId}/${questionModel.user.id}/${questionModel.user.profile}";
+    return NetworkImage(fileUrl);
   }
 }

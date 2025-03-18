@@ -7,16 +7,14 @@ class DataNotFoundWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
+        padding: const EdgeInsets.all(24.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.grey),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Text(
-            "😱 Data Not Found",
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white),
-          ),
+        child: Text(
+          "😱 Data Not Found",
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white),
         ),
       ),
     );

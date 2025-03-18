@@ -17,40 +17,44 @@ class ActionButtonWidget extends StatelessWidget {
   final String noticeContent;
   final String buttonText;
   final bool showNotice;
-
   final bool isUpdated;
   final AsyncCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        minimumSize: Size.fromHeight(48), // Set the height
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.zero,
-        ),
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-      ),
+      style: _buttonStyle(context),
       onPressed: () async {
         await onPressed();
-
-        if (showNotice) {
-          Get.snackbar(
-            noticeTitle,
-            noticeContent,
-            snackPosition: SnackPosition.BOTTOM,
-            margin: EdgeInsets.all(16),
-          );
-        }
+        if (showNotice) _showSnackbar();
       },
       child: isUpdated
-          ? LinearProgressIndicator()
+          ? const LinearProgressIndicator()
           : Text(
               buttonText,
               style: Theme.of(context).textTheme.titleMedium,
             ),
+    );
+  }
+
+  ButtonStyle _buttonStyle(BuildContext context) {
+    return ElevatedButton.styleFrom(
+      minimumSize: const Size.fromHeight(48), // 버튼 높이 설정
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+      ),
+      side: BorderSide(
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+    );
+  }
+
+  void _showSnackbar() {
+    Get.snackbar(
+      noticeTitle,
+      noticeContent,
+      snackPosition: SnackPosition.BOTTOM,
+      margin: const EdgeInsets.all(16),
     );
   }
 }

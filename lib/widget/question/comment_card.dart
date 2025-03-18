@@ -28,60 +28,20 @@ class CommentCardWidget extends StatelessWidget {
   final UserProvider userProvider = Get.put(UserProvider());
   final QuestionDetailProvider questionDetailProvider = Get.put(QuestionDetailProvider());
 
-  Widget renderIconButton() {
-    if (userProvider.user.value.id == commentModel.user.id) {
-      return Row(
-        children: [
-          if (onDelete != null)
-            IconButtonWidget(
-              color: Colors.red,
-              onPressed: onDelete!,
-              icon: Icons.delete_forever_outlined,
-            ),
-        ],
-      );
-    }
+  @override
+  Widget build(BuildContext context) {
+    return commentModel.user.id.isEmpty ? _buildNextPageButton() : _buildCommentCard(context);
+  }
 
-    return Row(
-      children: [
-        if (onBlock != null)
-          IconButtonWidget(
-            color: Colors.red,
-            onPressed: onBlock!,
-            icon: Icons.block,
-          ),
-        if (onReport != null)
-          IconButtonWidget(
-            color: Colors.red,
-            onPressed: onReport!,
-            icon: Icons.notification_important_outlined,
-          ),
-      ],
+  Widget _buildNextPageButton() {
+    return NextPageButtonWidget(
+      onTab: () => onNextPage,
     );
   }
 
-  ImageProvider<Object> getFileImageWidget(CommentModel commentModel) {
-    if (commentModel.user.profile.toString().isEmpty) {
-      return AssetImage('assets/avatar/default.png');
-    }
-
-    final fileUrl =
-        "${dotenv.env['POCKET_BASE_FILE_URL']}${commentModel.user.collectionId}/${commentModel.user.id}/${commentModel.user.profile}";
-    return NetworkImage(fileUrl);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (commentModel.user.id.isEmpty) {
-      return NextPageButtonWidget(
-        onTab: () => {
-          if (onNextPage != null) {onNextPage!()}
-        },
-      );
-    }
-
+  Widget _buildCommentCard(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 5, bottom: 5, left: 30, right: 10),
+      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: Card(
         elevation: 5,
         shape: RoundedRectangleBorder(
@@ -97,58 +57,111 @@ class CommentCardWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    backgroundImage: getFileImageWidget(commentModel),
-                    radius: 20,
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    commentModel.user.username,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
-                  ),
-                  Spacer(),
-                  renderIconButton(),
-                ],
-              ),
-              SizedBox(height: 10),
-              Text(
-                commentModel.comment,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  DateAreaWidget(currentTime: commentModel.created),
-                  Row(
-                    children: [
-                      IconButtonWidget(
-                        color: Colors.lightBlue,
-                        onPressed: () => questionDetailProvider.thumbUpItem(model: commentModel),
-                        icon: Icons.thumb_up,
-                      ),
-                      Text(
-                        NumberFormat("#,###").format(commentModel.thumb_up),
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black),
-                      ),
-                      IconButtonWidget(
-                        color: Colors.red,
-                        onPressed: () => questionDetailProvider.thumbDownItem(model: commentModel),
-                        icon: Icons.thumb_down,
-                      ),
-                      Text(
-                        NumberFormat("#,###").format(commentModel.thumb_down),
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black),
-                      ),
-                    ],
-                  )
-                ],
-              ),
+              _buildHeader(context),
+              const SizedBox(height: 10),
+              _buildCommentText(context),
+              _buildFooter(context),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      children: [
+        CircleAvatar(
+          backgroundImage: _getProfileImage(),
+          radius: 20,
+        ),
+        const SizedBox(width: 10),
+        Text(
+          commentModel.user.username,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
+        ),
+        const Spacer(),
+        _buildActionButtons(),
+      ],
+    );
+  }
+
+  Widget _buildCommentText(BuildContext context) {
+    return Text(
+      commentModel.comment,
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black),
+    );
+  }
+
+  Widget _buildFooter(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        DateAreaWidget(currentTime: commentModel.created),
+        _buildThumbButtons(context),
+      ],
+    );
+  }
+
+  Widget _buildThumbButtons(BuildContext context) {
+    return Row(
+      children: [
+        IconButtonWidget(
+          color: Colors.lightBlue,
+          onPressed: () => questionDetailProvider.thumbUpItem(model: commentModel),
+          icon: Icons.thumb_up,
+        ),
+        Text(
+          NumberFormat("#,###").format(commentModel.thumb_up),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black),
+        ),
+        IconButtonWidget(
+          color: Colors.red,
+          onPressed: () => questionDetailProvider.thumbDownItem(model: commentModel),
+          icon: Icons.thumb_down,
+        ),
+        Text(
+          NumberFormat("#,###").format(commentModel.thumb_down),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons() {
+    final isCurrentUser = userProvider.user.value.id == commentModel.user.id;
+
+    return Row(
+      children: [
+        if (isCurrentUser && onDelete != null)
+          IconButtonWidget(
+            color: Colors.red,
+            onPressed: onDelete!,
+            icon: Icons.delete_forever_outlined,
+          ),
+        if (!isCurrentUser && onBlock != null)
+          IconButtonWidget(
+            color: Colors.red,
+            onPressed: onBlock!,
+            icon: Icons.block,
+          ),
+        if (!isCurrentUser && onReport != null)
+          IconButtonWidget(
+            color: Colors.red,
+            onPressed: onReport!,
+            icon: Icons.notification_important_outlined,
+          ),
+      ],
+    );
+  }
+
+  ImageProvider<Object> _getProfileImage() {
+    if (commentModel.user.profile.toString().isEmpty) {
+      return const AssetImage('assets/avatar/default.png');
+    }
+
+    final fileUrl =
+        "${dotenv.env['POCKET_BASE_FILE_URL']}${commentModel.user.collectionId}/${commentModel.user.id}/${commentModel.user.profile}";
+    return NetworkImage(fileUrl);
   }
 }
