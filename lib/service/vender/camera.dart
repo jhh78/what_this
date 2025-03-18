@@ -35,12 +35,20 @@ class CameraService {
       Get.dialog(
         AlertDialog(
           title: const Text('カメラの権限が必要です'),
-          content: const Text('プロフィール写真の変更や質問登録を行うために、カメラの権限が必要です。設定からカメラの権限を許可してください。'),
+          content: const Text(
+            'このアプリでは、プロフィール写真の変更や質問登録のためにカメラの権限が必要です。カメラの権限を許可してください。',
+          ),
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(8)),
           ),
           actions: [
-            SimpleButtonWidget(onClick: () => openAppSettings(), title: '許可する'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                SimpleButtonWidget(onClick: () => Get.back(), title: 'キャンセル'),
+                SimpleButtonWidget(onClick: () => openAppSettings(), title: '許可する'),
+              ],
+            )
           ],
         ),
       );
