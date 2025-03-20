@@ -11,6 +11,8 @@ import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/util/styles.dart';
 import 'package:whats_this/util/util.dart';
 import 'package:whats_this/widget/atoms/action_button.dart';
+import 'package:whats_this/widget/atoms/dimple_diadlog.dart';
+import 'package:whats_this/widget/atoms/snackber.dart';
 
 class UserInfoScreen extends StatelessWidget {
   UserInfoScreen({super.key});
@@ -41,43 +43,25 @@ class UserInfoScreen extends StatelessWidget {
 
   void _handleUserDelete() {
     if (userProvider.isDeleted.value) {
-      Get.snackbar(
-        '処理中',
-        'ユーザー情報を削除しています。',
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(24),
-        backgroundColor: Colors.redAccent,
-        colorText: Colors.white,
-      );
+      infoSnackBar(title: '処理中', content: 'ユーザー情報を削除しています。');
       return;
     }
 
     Get.dialog(
-      AlertDialog(
-        title: const Text('ユーザー退会'),
-        content: const Text('本当に退会しますか？退会のため認証が必要な場合もあります。'),
-        actions: [
-          ActionButtonWidget(
-            buttonText: '退会する',
-            isUpdated: false,
-            onPressed: () async {
-              try {
-                Get.back();
-                await userProvider.deleteUser();
-                Get.offAll(() => SignInScreen());
-              } catch (e) {
-                Get.snackbar(
-                  'エラー',
-                  'ユーザー情報の削除に失敗しました。',
-                  snackPosition: SnackPosition.BOTTOM,
-                  margin: const EdgeInsets.all(24),
-                  backgroundColor: Colors.redAccent,
-                  colorText: Colors.white,
-                );
-              }
-            },
-          ),
-        ],
+      SimpleDialogWidget(
+        title: 'ユーザー退会',
+        content: '本当に退会しますか？退会のため認証が必要な場合もあります。',
+        okTitle: '退会する',
+        okFunction: () async {
+          try {
+            Get.back();
+            userProvider.isDeleted.value = true;
+            await userProvider.deleteUser();
+            Get.offAll(() => SignInScreen());
+          } catch (e) {
+            errorSnackBar(title: 'エラー', content: 'ユーザー情報の削除に失敗しました。');
+          }
+        },
       ),
     );
   }
@@ -150,16 +134,20 @@ class UserInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('会員情報'),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.remove_circle_outline_rounded),
-              onPressed: _handleUserDelete,
-              iconSize: ICON_SIZE,
-            ),
-          ],
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: Obx(() => AppBar(
+                title: Text(userProvider.isDeleted.value ? '会員削除中' : '会員情報'),
+                centerTitle: true,
+                actions: [
+                  if (!userProvider.isDeleted.value)
+                    IconButton(
+                      icon: const Icon(Icons.remove_circle_outline_rounded),
+                      onPressed: _handleUserDelete,
+                      iconSize: ICON_SIZE,
+                    ),
+                ],
+              )),
         ),
         body: Stack(
           children: [

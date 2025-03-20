@@ -1,11 +1,10 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:whats_this/widget/atoms/simple_button.dart';
+import 'package:whats_this/widget/atoms/dimple_diadlog.dart';
 
 class CameraService {
   final ImagePicker picker = ImagePicker();
@@ -31,23 +30,11 @@ class CameraService {
       return null;
     } catch (err) {
       Get.dialog(
-        AlertDialog(
-          title: const Text('カメラの権限が必要です'),
-          content: const Text(
-            'このアプリでは、プロフィール写真の変更や質問登録のためにカメラの権限が必要です。カメラの権限を許可してください。',
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8)),
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                SimpleButtonWidget(onClick: () => Get.back(), title: 'キャンセル'),
-                SimpleButtonWidget(onClick: () => openAppSettings(), title: '許可する'),
-              ],
-            )
-          ],
+        SimpleDialogWidget(
+          title: 'カメラの権限が必要です',
+          content: 'このアプリでは、プロフィール写真の変更や質問登録のためにカメラの権限が必要です。カメラの権限を許可してください。',
+          okTitle: '許可する',
+          okFunction: () => openAppSettings(),
         ),
       );
       return null;
