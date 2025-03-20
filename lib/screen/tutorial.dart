@@ -57,10 +57,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
       body: Stack(
         children: [
           _buildPageView(),
-          TutorialPagination(
-            currentPage: _currentPage,
-            tutorialDataLength: _tutorialData.length,
-          ),
+          _buildPagination(),
         ],
       ),
     );
@@ -71,9 +68,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
       controller: _pageController,
       onPageChanged: (index) => setState(() => _currentPage = index),
       itemCount: _tutorialData.length,
-      itemBuilder: (context, index) {
-        return _buildPageItem(index);
-      },
+      itemBuilder: (context, index) => _buildPageItem(index),
     );
   }
 
@@ -84,16 +79,12 @@ class _TutorialScreenState extends State<TutorialScreen> {
       builder: (context, child) {
         final value = _pageController.position.haveDimensions ? _pageController.page! - index : 0.0;
 
-        final rotationX = value * 3.14 / 6; // X축 회전 (30도)
-        final rotationY = value * 3.14 / 12; // Y축 회전 (15도)
-        final translationZ = value * -500; // Z축 이동 (깊이 효과)
-
         return Transform(
           transform: Matrix4.identity()
-            ..setEntry(3, 2, 0.001) // Perspective effect
-            ..rotateX(rotationX)
-            ..rotateY(rotationY)
-            ..translate(0.0, 0.0, translationZ),
+            ..setEntry(3, 2, 0.001)
+            ..rotateX(value * 3.14 / 6)
+            ..rotateY(value * 3.14 / 12)
+            ..translate(0.0, 0.0, value * -500),
           alignment: Alignment.center,
           child: Opacity(
             opacity: (1 - value.abs()).clamp(0.0, 1.0),
@@ -106,6 +97,13 @@ class _TutorialScreenState extends State<TutorialScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildPagination() {
+    return TutorialPagination(
+      currentPage: _currentPage,
+      tutorialDataLength: _tutorialData.length,
     );
   }
 }

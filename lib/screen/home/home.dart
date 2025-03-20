@@ -13,13 +13,14 @@ import 'package:whats_this/util/constants.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
+
   final HomeService homeService = HomeService();
   final HomeProvider homeProvider = Get.put(HomeProvider());
   final UserProvider userProvider = Get.put(UserProvider());
 
-  Widget renderBottomNavigationBar() {
+  Widget _buildBottomNavigationBar() {
     if (userProvider.isDeleted.value) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     return BottomNavigationBar(
@@ -28,7 +29,7 @@ class HomeScreen extends StatelessWidget {
       unselectedItemColor: Colors.grey,
       currentIndex: homeService.getMenuIndex(),
       onTap: homeService.onTabScreen,
-      items: [
+      items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
           label: 'Info',
@@ -49,12 +50,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Future<Widget> renderHomeContents() async {
-    final isFirst = await HiveService.getBoxValue(USER_TUTORIAL);
-    if (isFirst == null) {
-      return TutorialScreen();
-    }
-
+  Widget _buildHomeContents() {
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -70,42 +66,50 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Positioned.fill(
-              child: Obx(
-                () => userProvider.isUpdated.value
-                    ? Container(
-                        color: Colors.black.withAlpha(200),
-                        child: Center(
-                          child: const CircularProgressIndicator(),
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
+            Obx(
+              () => userProvider.isUpdated.value
+                  ? Container(
+                      color: Colors.black.withAlpha(200),
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: Obx(() => renderBottomNavigationBar()),
+      bottomNavigationBar: Obx(() => _buildBottomNavigationBar()),
     );
+  }
+
+  Future<bool> _isFirstTimeUser() async {
+    final isFirst = await HiveService.getBoxValue(USER_TUTORIAL);
+    return isFirst == null;
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      child: FutureBuilder(
-          future: renderHomeContents(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
+      child: FutureBuilder<bool>(
+        future: _isFirstTimeUser(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
 
-            return snapshot.data!;
-          }),
+          if (snapshot.data == true) {
+            return const TutorialScreen();
+          }
+
+          return _buildHomeContents();
+        },
+      ),
     );
   }
 }

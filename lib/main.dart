@@ -40,6 +40,9 @@ void main() async {
   runApp(MyApp(currentUser: currentUser));
 }
 
+// TODO: 프로바이더에 들어가있는 서비스 로직 분리하기
+// TODO: 테스트 코드 작성하기
+// TODO: 리펙토링 하기
 class MyApp extends StatelessWidget {
   final User? currentUser;
 

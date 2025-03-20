@@ -13,77 +13,81 @@ import 'package:whats_this/widget/question/contents_card.dart';
 
 class QuestionListScreen extends StatelessWidget {
   QuestionListScreen({super.key});
+
   final HomeProvider homeProvider = Get.put(HomeProvider());
   final QuestionListProvider questionListProvider = Get.put(QuestionListProvider());
   final FormProvider formProvider = Get.put(FormProvider());
   final QuestionDetailProvider questionDetailProvider = Get.put(QuestionDetailProvider());
 
-  void handleOnBlock({required BuildContext context, required QuestionModel question}) {
-    FocusScope.of(context).unfocus(); // 포커스 해제
-    showConfirmDialog(
+  void _handleBlock(BuildContext context, QuestionModel question) {
+    _showConfirmDialog(
+      context: context,
       title: 'ブロック',
-      middleText: "選択したコンテンツをブロックしますか？",
+      middleText: '選択したコンテンツをブロックしますか？',
       onConfirm: () {
         questionListProvider.handleBlock(question);
-        FocusScope.of(context).unfocus(); // 포커스 해제
-        Get.back();
-      },
-      onClose: () {
-        FocusScope.of(context).unfocus(); // 포커스 해제
         Get.back();
       },
     );
   }
 
-  void handleOnReport({required BuildContext context, required QuestionModel question}) {
-    showConfirmDialog(
+  void _handleReport(BuildContext context, QuestionModel question) {
+    _showConfirmDialog(
+      context: context,
       title: '通報',
-      middleText: "通報理由を選択してください。",
+      middleText: '通報理由を選択してください。',
       content: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20),
+        padding: EdgeInsets.symmetric(horizontal: 20),
         child: ReasonFormWidget(),
       ),
-      onClose: () {
-        FocusScope.of(context).unfocus(); // 포커스 해제
-        Get.back();
-      },
       onConfirm: () {
-        if (!(formProvider.formKey.currentState?.validate() ?? false)) {
-          return;
+        if (formProvider.formKey.currentState?.validate() ?? false) {
+          questionListProvider.handleReport(
+            question,
+            formProvider.getData(REPORT_REASON_KIND),
+          );
+          Get.back();
         }
-
-        questionListProvider.handleReport(question, formProvider.getData(REPORT_REASON_KIND));
-        FocusScope.of(context).unfocus(); // 포커스 해제
-        Get.back();
       },
     );
   }
 
-  void handleOnDelete({required BuildContext context, required QuestionModel question}) {
-    showConfirmDialog(
+  void _handleDelete(BuildContext context, QuestionModel question) {
+    _showConfirmDialog(
+      context: context,
       title: '削除',
-      middleText: "選択したコンテンツを削除しますか？",
+      middleText: '選択したコンテンツを削除しますか？',
       onConfirm: () {
         questionListProvider.handleDelete(question);
-        FocusScope.of(context).unfocus(); // 포커스 해제
-        Get.back();
-      },
-      onClose: () {
-        FocusScope.of(context).unfocus(); // 포커스 해제
         Get.back();
       },
     );
   }
 
-  Widget renderListContents(BuildContext context) {
+  void _showConfirmDialog({
+    required BuildContext context,
+    required String title,
+    required String middleText,
+    Widget? content,
+    required VoidCallback onConfirm,
+  }) {
+    FocusScope.of(context).unfocus();
+    showConfirmDialog(
+      title: title,
+      middleText: middleText,
+      content: content,
+      onConfirm: onConfirm,
+      onClose: () => Get.back(),
+    );
+  }
+
+  Widget _buildListContents(BuildContext context) {
     if (questionListProvider.isLoading.value) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (questionListProvider.questionList.isEmpty) {
-      return DataNotFoundWidget();
+      return const DataNotFoundWidget();
     }
 
     return ListView.builder(
@@ -97,10 +101,10 @@ class QuestionListScreen extends StatelessWidget {
           },
           child: ContentsCardWidget(
             questionModel: question,
-            nextPage: () => questionListProvider.handleNextPage(),
-            onBlock: () => handleOnBlock(context: context, question: question),
-            onReport: () => handleOnReport(context: context, question: question),
-            onDelete: () => handleOnDelete(context: context, question: question),
+            nextPage: questionListProvider.handleNextPage,
+            onBlock: () => _handleBlock(context, question),
+            onReport: () => _handleReport(context, question),
+            onDelete: () => _handleDelete(context, question),
           ),
         );
       },
@@ -111,7 +115,7 @@ class QuestionListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Obx(() => renderListContents(context)),
+        body: Obx(() => _buildListContents(context)),
       ),
     );
   }

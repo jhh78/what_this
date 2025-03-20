@@ -1,12 +1,10 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:whats_this/service/vender/hive.dart';
 import 'package:whats_this/widget/atoms/simple_button.dart';
 
 class CameraService {

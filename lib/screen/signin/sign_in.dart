@@ -36,7 +36,7 @@ class SignInScreen extends StatelessWidget {
     return Positioned.fill(
       child: Image.asset(
         "assets/signIn.png",
-        fit: BoxFit.fill,
+        fit: BoxFit.cover, // `BoxFit.fill` 대신 `BoxFit.cover`로 자연스러운 비율 유지
       ),
     );
   }
@@ -45,23 +45,29 @@ class SignInScreen extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 100, left: 30, right: 30),
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (Platform.isAndroid)
-              SignInButton(
-                Buttons.GoogleDark,
-                onPressed: _handleMovePolicy,
-              ),
-            if (Platform.isIOS)
-              SignInButton(
-                Buttons.AppleDark,
-                onPressed: _handleMovePolicy,
-              ),
+            if (Platform.isAndroid) _buildGoogleSignInButton(),
+            if (Platform.isIOS) _buildAppleSignInButton(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildGoogleSignInButton() {
+    return SignInButton(
+      Buttons.GoogleDark,
+      onPressed: _handleMovePolicy,
+    );
+  }
+
+  Widget _buildAppleSignInButton() {
+    return SignInButton(
+      Buttons.AppleDark,
+      onPressed: _handleMovePolicy,
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:whats_this/widget/atoms/simple_button.dart';
 
 void showConfirmDialog({
   required String title,
@@ -13,22 +14,21 @@ void showConfirmDialog({
     middleText: middleText,
     content: content,
     actions: [
-      TextButton(
-        onPressed: () {
-          if (onClose != null) {
-            onClose();
-          } else {
+      SimpleButtonWidget(
+          onClick: () {
+            if (onClose != null) {
+              onClose();
+            }
+
             Get.back();
-          }
-        },
-        child: Text('No'),
-      ),
-      TextButton(
-        onPressed: () {
-          onConfirm();
-        },
-        child: Text('Yes'),
-      ),
+          },
+          title: 'NO'),
+      SimpleButtonWidget(
+          onClick: () {
+            onConfirm();
+            Get.back();
+          },
+          title: 'Yes'),
     ],
   );
 }

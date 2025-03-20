@@ -6,7 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:whats_this/provider/user.dart';
 import 'package:whats_this/screen/signin/sign_in.dart';
-import 'package:whats_this/service/vender/camera.dart';
 import 'package:whats_this/service/vender/hive.dart';
 import 'package:whats_this/util/constants.dart';
 import 'package:whats_this/util/styles.dart';
@@ -15,19 +14,18 @@ import 'package:whats_this/widget/atoms/action_button.dart';
 
 class UserInfoScreen extends StatelessWidget {
   UserInfoScreen({super.key});
-  final UserProvider userProvider = Get.put(UserProvider());
-  final CameraService cameraService = CameraService();
 
-  ImageProvider<Object> getFileImageWidget() {
+  final UserProvider userProvider = Get.put(UserProvider());
+
+  ImageProvider<Object> _getProfileImage() {
     try {
       if (userProvider.tempProfileImage.value.path.isNotEmpty) {
         return FileImage(userProvider.tempProfileImage.value);
       } else if (userProvider.user.value.profile.isEmpty) {
-        return AssetImage('assets/avatar/default.png');
+        return const AssetImage('assets/avatar/default.png');
       }
 
-      final dynamic imagePath = HiveService.getBoxValue(USER_PROFILE_IMAGE);
-      log('User Profile ImagePath: $imagePath');
+      final imagePath = HiveService.getBoxValue(USER_PROFILE_IMAGE);
       if (imagePath != null && imagePath is String && imagePath.isNotEmpty) {
         return FileImage(File(imagePath));
       }
@@ -37,11 +35,11 @@ class UserInfoScreen extends StatelessWidget {
       return NetworkImage(fileUrl);
     } catch (e, stackTrace) {
       log(e.toString(), stackTrace: stackTrace);
-      return AssetImage('assets/avatar/default.png');
+      return const AssetImage('assets/avatar/default.png');
     }
   }
 
-  void handleUserDelete() {
+  void _handleUserDelete() {
     if (userProvider.isDeleted.value) {
       Get.snackbar(
         '処理中',
@@ -50,98 +48,89 @@ class UserInfoScreen extends StatelessWidget {
         margin: const EdgeInsets.all(24),
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
-        forwardAnimationCurve: Curves.easeOutBack,
       );
       return;
     }
 
     Get.dialog(
       AlertDialog(
-        title: Text('ユーザー退会'),
-        content: Text('本当に退会しますか？退会のため認証が必要な場合もあります。'),
+        title: const Text('ユーザー退会'),
+        content: const Text('本当に退会しますか？退会のため認証が必要な場合もあります。'),
         actions: [
           ActionButtonWidget(
-              buttonText: '退会する',
-              isUpdated: false,
-              onPressed: () async {
-                try {
-                  Get.back();
-                  await userProvider.deleteUser();
-                  Get.offAll(() => SignInScreen());
-                } catch (e) {
-                  await Future.delayed(const Duration(seconds: 1));
-                  Get.snackbar(
-                    'エラー',
-                    'ユーザー情報の削除に失敗しました。',
-                    snackPosition: SnackPosition.BOTTOM,
-                    margin: const EdgeInsets.all(24),
-                    backgroundColor: Colors.redAccent,
-                    colorText: Colors.white,
-                    forwardAnimationCurve: Curves.easeOutBack,
-                  );
-                }
-              }),
+            buttonText: '退会する',
+            isUpdated: false,
+            onPressed: () async {
+              try {
+                Get.back();
+                await userProvider.deleteUser();
+                Get.offAll(() => SignInScreen());
+              } catch (e) {
+                Get.snackbar(
+                  'エラー',
+                  'ユーザー情報の削除に失敗しました。',
+                  snackPosition: SnackPosition.BOTTOM,
+                  margin: const EdgeInsets.all(24),
+                  backgroundColor: Colors.redAccent,
+                  colorText: Colors.white,
+                );
+              }
+            },
+          ),
         ],
       ),
     );
   }
 
-  Widget renderUserInfoContents(BuildContext context) {
-    if (userProvider.isLoading.value) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+  Widget _buildProfileSection() {
+    return GestureDetector(
+      onTap: () => userProvider.pickImage(),
+      child: CircleAvatar(
+        backgroundImage: _getProfileImage(),
+        radius: 120,
+        child: Align(
+          alignment: Alignment.bottomRight,
+          child: Icon(
+            Icons.camera_alt,
+            color: Colors.white,
+            size: ICON_SIZE_BIG,
+          ),
+        ),
+      ),
+    );
+  }
 
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () => userProvider.pickImage(),
-              child: CircleAvatar(
-                backgroundImage: getFileImageWidget(),
-                radius: 120,
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: Icon(
-                    Icons.camera_alt,
-                    color: Colors.white,
-                    size: ICON_SIZE_BIG,
-                  ),
-                ),
+  Widget _buildUserInfo() {
+    return Column(
+      children: [
+        _buildProfileSection(),
+        const SizedBox(height: 48),
+        Padding(
+          padding: const EdgeInsets.all(48.0),
+          child: Column(
+            children: [
+              _buildRow('ユーザー名: ', userProvider.user.value.username),
+              const SizedBox(height: 40),
+              _buildRow('レベル: ', getLevel(userProvider.user.value.exp)),
+              const SizedBox(height: 40),
+              _buildRow('経験値: ', getNumberFormat(userProvider.user.value.exp)),
+              const SizedBox(height: 40),
+              ActionButtonWidget(
+                noticeTitle: '処理完了',
+                noticeContent: 'ユーザー情報が更新されました。',
+                buttonText: '更新',
+                showNotice: true,
+                isUpdated: userProvider.isUpdated.value,
+                onPressed: userProvider.updateUser,
               ),
-            ),
+            ],
           ),
-          const SizedBox(height: 48),
-          Padding(
-            padding: const EdgeInsets.all(48.0),
-            child: Column(
-              children: [
-                renderRowWidget('ユーザー名: ', userProvider.user.value.username),
-                const SizedBox(height: 40),
-                renderRowWidget('レベル: ', getLevel(userProvider.user.value.exp)),
-                const SizedBox(height: 40),
-                renderRowWidget('経験値: ', getNumberFormat(userProvider.user.value.exp)),
-                const SizedBox(height: 40),
-                ActionButtonWidget(
-                  noticeTitle: '処理完了',
-                  noticeContent: 'ユーザー情報が更新されました。',
-                  buttonText: '更新',
-                  showNotice: true,
-                  isUpdated: userProvider.isUpdated.value,
-                  onPressed: userProvider.updateUser,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Row renderRowWidget(String title, String value) {
+  Widget _buildRow(String title, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -162,16 +151,13 @@ class UserInfoScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('会員情報', style: Theme.of(context).textTheme.headlineMedium),
+          title: const Text('会員情報'),
           centerTitle: true,
           actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: IconButton(
-                icon: Icon(Icons.remove_circle_outline_rounded),
-                onPressed: handleUserDelete,
-                iconSize: ICON_SIZE,
-              ),
+            IconButton(
+              icon: const Icon(Icons.remove_circle_outline_rounded),
+              onPressed: _handleUserDelete,
+              iconSize: ICON_SIZE,
             ),
           ],
         ),
@@ -179,20 +165,16 @@ class UserInfoScreen extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Obx(() => renderUserInfoContents(context)),
+              child: Obx(() => userProvider.isLoading.value ? const Center(child: CircularProgressIndicator()) : _buildUserInfo()),
             ),
-            Positioned.fill(
-              child: Obx(
-                () => userProvider.isDeleted.value
-                    ? Container(
-                        color: Colors.black.withAlpha(200),
-                        child: Center(
-                          child: const CircularProgressIndicator(),
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
-            )
+            Obx(
+              () => userProvider.isDeleted.value
+                  ? Container(
+                      color: Colors.black.withAlpha(200),
+                      child: const Center(child: CircularProgressIndicator()),
+                    )
+                  : const SizedBox.shrink(),
+            ),
           ],
         ),
       ),
