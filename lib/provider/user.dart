@@ -15,8 +15,6 @@ import 'package:whats_this/util/constants.dart';
 class UserProvider extends GetxService {
   Rx<UserModel> user = UserModel.emptyModel().obs;
   Rx<File> tempProfileImage = File('').obs;
-  RxBool isLoading = false.obs;
-  RxBool isUpdated = false.obs;
   RxBool isDeleted = false.obs;
 
   final tableName = 'user';
@@ -44,12 +42,10 @@ class UserProvider extends GetxService {
       return;
     }
 
-    isLoading.value = true;
     final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
     final record = await pb.collection(tableName).getOne(userID);
     user.value = UserModel.fromRecordModel(record);
     tempProfileImage.value = File('');
-    isLoading.value = false;
   }
 
   Future<void> createUser() async {
@@ -90,7 +86,6 @@ class UserProvider extends GetxService {
   }
 
   Future<void> updateUser() async {
-    isUpdated.value = true;
     final pb = PocketBase(dotenv.env['POCKET_BASE_URL']!);
 
     final body = <String, dynamic>{
@@ -104,7 +99,6 @@ class UserProvider extends GetxService {
 
     await pb.collection(tableName).update(user.value.id, body: body, files: multipartImages);
     await saveImageLocally(tempProfileImage.value); // 이미지 로컬 저장
-    isUpdated.value = false;
   }
 
   Future<void> addPoint() async {
@@ -146,6 +140,8 @@ class UserProvider extends GetxService {
       isDeleted.value = true;
       await AuthService.deleteUser();
       await HiveService.clearBox();
+      user = UserModel.emptyModel().obs;
+      tempProfileImage = File('').obs;
     } catch (e) {
       rethrow;
     } finally {

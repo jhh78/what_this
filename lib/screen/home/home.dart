@@ -53,30 +53,16 @@ class HomeScreen extends StatelessWidget {
   Widget _buildHomeContents() {
     return Scaffold(
       body: SafeArea(
-        child: Stack(
-          children: [
-            Obx(
-              () => IndexedStack(
-                index: homeService.getScreenIndex(),
-                children: [
-                  UserInfoScreen(),
-                  QuestionListScreen(),
-                  QuestionDetailScreen(),
-                  MyQuestionScreen(),
-                ],
-              ),
-            ),
-            Obx(
-              () => userProvider.isUpdated.value
-                  ? Container(
-                      color: Colors.black.withAlpha(200),
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            ),
-          ],
+        child: Obx(
+          () => IndexedStack(
+            index: homeService.getScreenIndex(),
+            children: [
+              UserInfoScreen(),
+              QuestionListScreen(),
+              QuestionDetailScreen(),
+              MyQuestionScreen(),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: Obx(() => _buildBottomNavigationBar()),

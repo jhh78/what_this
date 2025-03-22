@@ -13,7 +13,7 @@ class TutorialPagination extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: MediaQuery.of(context).size.height / 7, // 페이지 네비게이션의 Y축 위치
+      bottom: MediaQuery.of(context).size.height / 6, // 페이지 네비게이션의 Y축 위치
       left: 0,
       right: 0,
       child: Row(
@@ -31,8 +31,8 @@ class TutorialPagination extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      width: isActive ? 16 : 12, // 현재 페이지는 더 크게 표시
-      height: isActive ? 16 : 12,
+      width: isActive ? 16 * 1.5 : 12 * 1.5, // 현재 페이지는 더 크게 표시
+      height: isActive ? 16 * 1.5 : 12 * 1.5,
       decoration: BoxDecoration(
         color: isActive
             ? Colors.primaries[index % Colors.primaries.length] // 활성화된 페이지는 컬러풀한 색상

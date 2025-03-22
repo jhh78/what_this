@@ -31,11 +31,13 @@ class CameraService {
     } catch (err) {
       Get.dialog(
         SimpleDialogWidget(
-          title: 'カメラの権限が必要です',
-          content: 'このアプリでは、プロフィール写真の変更や質問登録のためにカメラの権限が必要です。カメラの権限を許可してください。',
-          okTitle: '許可する',
-          okFunction: () => openAppSettings(),
-        ),
+            title: 'カメラの権限が必要です',
+            content: 'このアプリでは、プロフィール写真の変更や質問登録のためにカメラの権限が必要です。カメラの権限を許可してください。',
+            okTitle: '許可する',
+            okFunction: () {
+              openAppSettings();
+              Get.back();
+            }),
       );
       return null;
     }

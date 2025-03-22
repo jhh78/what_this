@@ -43,6 +43,7 @@ void main() async {
 // TODO: 프로바이더에 들어가있는 서비스 로직 분리하기
 // TODO: 테스트 코드 작성하기
 // TODO: 리펙토링 하기
+// TODO: 각 페이지 스테이트 판단후 최적화 하기
 class MyApp extends StatelessWidget {
   final User? currentUser;
 
@@ -67,6 +68,11 @@ class MyApp extends StatelessWidget {
         );
       },
       home: UpgradeAlert(
+        showIgnore: false,
+        showLater: false,
+        upgrader: Upgrader(
+          messages: UpgraderMessages(code: 'ja'),
+        ),
         dialogStyle: UpgradeDialogStyle.cupertino,
         child: currentUser == null ? SignInScreen() : HomeScreen(),
       ),
